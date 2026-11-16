@@ -1,7 +1,20 @@
 {
-  "format": "rtx-deal-hunter-feed",
-  "version": 2,
-  "generated": null,
-  "sources": [],
-  "items": []
+ "format": "rtx-deal-hunter-feed",
+ "version": 2,
+ "generated": "2026-11-16T22:33:39.946Z",
+ "schedule": "Every 3 hours via GitHub Actions",
+ "sources": [
+  {
+   "id": "bestbuy-api",
+   "name": "Best Buy API",
+   "status": "off",
+   "detail": "No BESTBUY_API_KEY secret set. See README."
+  }
+ ],
+ "stats": {
+  "items": 0,
+  "newItems": 0,
+  "newPrices": 0
+ },
+ "items": []
 }
