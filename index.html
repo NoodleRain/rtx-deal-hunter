@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>RTX Deal Hunter · Gaming Laptop Deal Tracker</title>
+  <meta name="description" content="Track, compare and score RTX 50-series gaming laptop deals for Black Friday and Cyber Monday. Runs entirely in your browser.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0d11">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#view">Skip to content</a>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <div class="logo">
+        <img src="assets/favicon.svg" alt="" width="28" height="28">
+        <div>
+          <div class="logo-name">RTX Deal Hunter</div>
+          <div class="logo-sub">Black Friday 2026</div>
+        </div>
+      </div>
+      <nav id="nav"></nav>
+      <div class="sidebar-foot">
+        <p>Your data stays in this browser on this device. Use Settings → Export to back it up.</p>
+      </div>
+    </aside>
+    <div class="scrim" data-action="nav-close"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn nav-toggle" data-action="nav-toggle" aria-label="Open menu" aria-controls="sidebar"></button>
+        <label class="top-search">
+          <span class="sr-only">Search laptops</span>
+          <span class="top-search-icon" aria-hidden="true"></span>
+          <input type="search" id="global-search" placeholder="Search model, brand, CPU, GPU…" autocomplete="off">
+        </label>
+        <div class="top-actions">
+          <span class="pill pill-demo" id="demo-pill" hidden>Demo data on</span>
+          <button class="btn btn-ghost" data-action="refresh" id="refresh-btn" title="Refresh prices"></button>
+          <button class="btn btn-primary" data-action="add-laptop" id="add-btn"></button>
+          <button class="icon-btn" data-action="theme" id="theme-btn" aria-label="Toggle light or dark theme"></button>
+        </div>
+      </header>
+
+      <main id="view" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <div class="compare-tray" id="compare-tray" hidden></div>
+  <div class="modal-root" id="modal-root" hidden></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <input type="file" id="import-input" accept=".json,.csv,application/json,text/csv" hidden>
+
+  <noscript><p class="noscript">RTX Deal Hunter needs JavaScript turned on.</p></noscript>
+</body>
+</html>

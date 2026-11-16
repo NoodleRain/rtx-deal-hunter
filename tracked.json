@@ -1,0 +1,11 @@
+{
+  "_help": "Laptops the automatic checker watches. Edit this file on GitHub, or use Settings > 'Download tracked.json' in the site. See README.",
+  "bestbuy": {
+    "enabled": true,
+    "gpus": ["5050", "5060", "5070", "5070 Ti", "5080", "5090"],
+    "minRamGB": 16,
+    "skus": [],
+    "maxPages": 2
+  },
+  "items": []
+}
