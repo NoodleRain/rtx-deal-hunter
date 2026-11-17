@@ -290,6 +290,7 @@
     const ramUp = toBool(r.ramUpgradeable);
     const demo = toBool(r.demo);
     const history = (Array.isArray(r.history) ? r.history : []).map(normObs).filter(Boolean)
+      .filter(o => !(o.status === 'seen' && o.price < 450))   // early extension misread monthly-payment amounts
       .map(o => demo ? { ...o, status: 'demo' } : o).sort(byT);
     return {
       id: String(r.id || uid()).replace(/[^\w.-]/g, '').slice(0, 64) || uid(),
