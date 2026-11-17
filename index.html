@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>RTX Deal Hunter · Gaming Laptop Deal Tracker</title>
-  <meta name="description" content="Track, compare and score RTX 50-series gaming laptop deals for Black Friday and Cyber Monday. Runs entirely in your browser.">
+  <title>RTX Deal Hunter</title>
+  <meta name="description" content="Track RTX 50-series gaming laptop prices, see real price history, and know whether a Black Friday deal is actually good.">
   <meta name="color-scheme" content="dark light">
-  <meta name="theme-color" content="#0b0d11">
+  <meta name="theme-color" content="#0a0b0d">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -16,47 +16,38 @@
 <body>
   <a class="skip-link" href="#view">Skip to content</a>
 
-  <div class="app">
-    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
-      <div class="logo">
-        <img src="assets/favicon.svg" alt="" width="28" height="28">
-        <div>
-          <div class="logo-name">RTX Deal Hunter</div>
-          <div class="logo-sub">Black Friday 2026</div>
-        </div>
-      </div>
-      <nav id="nav"></nav>
-      <div class="sidebar-foot">
-        <p>Your data stays in this browser on this device. Use Settings → Export to back it up.</p>
-      </div>
-    </aside>
-    <div class="scrim" data-action="nav-close"></div>
-
-    <div class="main">
-      <header class="topbar">
-        <button class="icon-btn nav-toggle" data-action="nav-toggle" aria-label="Open menu" aria-controls="sidebar"></button>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#/overview" aria-label="RTX Deal Hunter home">
+        <img src="assets/favicon.svg" alt="" width="26" height="26">
+        <span>RTX Deal Hunter</span>
+      </a>
+      <nav class="nav" id="nav" aria-label="Main"></nav>
+      <div class="top-tools">
         <label class="top-search">
           <span class="sr-only">Search laptops</span>
-          <span class="top-search-icon" aria-hidden="true"></span>
-          <input type="search" id="global-search" placeholder="Search model, brand, CPU, GPU…" autocomplete="off">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="search" id="global-search" placeholder="Search laptops" autocomplete="off">
         </label>
-        <div class="top-actions">
-          <span class="pill pill-demo" id="demo-pill" hidden>Demo data on</span>
-          <button class="btn btn-ghost" data-action="refresh" id="refresh-btn" title="Refresh prices"></button>
-          <button class="btn btn-primary" data-action="add-laptop" id="add-btn"></button>
-          <button class="icon-btn" data-action="theme" id="theme-btn" aria-label="Toggle light or dark theme"></button>
-        </div>
-      </header>
-
-      <main id="view" tabindex="-1"></main>
+        <button class="status-pill" id="status-pill" data-action="refresh"></button>
+        <a class="icon-btn" href="#/guide" title="How it works" aria-label="How it works"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg></a>
+        <a class="icon-btn" href="#/settings" title="Settings" aria-label="Settings"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></a>
+        <button class="icon-btn" data-action="theme" id="theme-btn" aria-label="Toggle light or dark theme"></button>
+      </div>
     </div>
-  </div>
+  </header>
 
+  <main id="view" tabindex="-1"></main>
+
+  <footer class="site-foot">
+    <p>Prices are recorded from store pages, automatic checks and web archives. Always confirm the final price at the store before buying. Your data stays in this browser and your GitHub repository.</p>
+  </footer>
+
+  <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
   <div class="compare-tray" id="compare-tray" hidden></div>
   <div class="modal-root" id="modal-root" hidden></div>
   <div class="toasts" id="toasts" aria-live="polite"></div>
   <input type="file" id="import-input" accept=".json,.csv,application/json,text/csv" hidden>
-
   <noscript><p class="noscript">RTX Deal Hunter needs JavaScript turned on.</p></noscript>
 </body>
 </html>

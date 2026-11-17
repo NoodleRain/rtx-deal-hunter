@@ -221,7 +221,7 @@
         return;
       }
     } catch (e) { console.warn('Could not read saved data', e); }
-    state = { laptops: buildDemo(), settings: { ...DEFAULT_SETTINGS }, compare: [], seededAt: new Date().toISOString() };
+    state = { laptops: [], settings: { ...DEFAULT_SETTINGS }, compare: [], seededAt: new Date().toISOString() };
     save();
   }
   function save() {
@@ -489,40 +489,6 @@
     return `<div class="price ${big ? 'price-big' : ''} ${l.demo ? 'is-demo' : ''}">${money(st.cur)}${l.demo ? '<span class="demo-tag">demo</span>' : ''}${list}</div>`;
   }
 
-  function card(l, pk) {
-    const st = priceStats(l), s = scoreFor(l, pk), g = GPUS[l.gpu], r = RETAILER_MAP[l.retailer];
-    const inCmp = state.compare.includes(l.id);
-    const link = retailerLink(l);
-    const hit = l.target && st && st.cur <= l.target;
-    return `<article class="card ${l.demo ? 'card-demo' : ''}" data-id="${esc(l.id)}">
-      <header class="card-head"><span class="brand">${esc(l.brand)}</span><div class="badges">${hit ? '<span class="badge badge-ok">Target hit</span>' : ''}${statusBadge(l)}</div></header>
-      <h3 class="card-title"><button class="linklike" data-action="detail" data-id="${esc(l.id)}">${esc(l.name)}</button></h3>
-      <div class="gpu-line"><span class="gpu-chip g${l.gpu}">${g.label}</span><span class="muted">${l.vram}GB VRAM${l.tgp ? ' · ' + l.tgp + 'W' : ''}</span></div>
-      <dl class="spec-list">
-        <div><dt>CPU</dt><dd>${esc(l.cpu || CPU_MAP[l.cpuClass].label)}</dd></div>
-        <div><dt>RAM</dt><dd>${l.ram}GB ${l.ramUpgradeable ? `<span class="ok">→ ${l.ramMax}GB</span>` : l.ramUpgradeKnown === false ? '<span class="muted">upgrade unknown</span>' : '<span class="muted">soldered</span>'}</dd></div>
-        <div><dt>SSD</dt><dd>${fmtStorage(l.storage)}${l.storageSlots > 1 ? ` <span class="muted">· ${l.storageSlots} slots</span>` : ''}</dd></div>
-        <div><dt>Display</dt><dd>${l.displaySize}" ${RES[l.displayRes].label} ${esc(l.panel)} ${l.hz}Hz</dd></div>
-      </dl>
-      <div class="price-block">
-        <div>${priceHtml(l, st)}<div class="delta-line">${deltaHtml(st, true)}</div></div>
-        ${sparkline(l.history)}
-      </div>
-      <button class="score-line" data-action="detail" data-id="${esc(l.id)}" title="See how this score is calculated">${scoreRing(s.total)}<div><div class="score-label">${profileLabel(pk)} score</div><div class="muted small">${esc(strengths(l, pk))}</div></div></button>
-      <footer class="card-foot">
-        ${statusOf(l) === 'archive' ? `<div class="muted small">Last known price from an archived copy of the page, ${esc(fmtDay(latest(l).t))}</div>` : ''}
-        ${l.checkStatus && l.checkStatus !== 'ok' ? `<div class="auto-warn small" title="${esc(l.checkDetail)}">${I('info')}Auto-check ${l.checkStatus === 'no-price' ? "couldn't find a price" : l.checkStatus}: check manually</div>` : ''}
-        <div class="checked">${I('clock')}<span>${st ? `${esc(r.name)} · <time datetime="${st.lastT}" title="${esc(fmtDate(st.lastT))}">checked ${ago(st.lastT)}</time>` : esc(r.name) + (lastCheck(l) ? ' · tried ' + ago(lastCheck(l)) : ' · not checked')}</span></div>
-        <div class="card-actions">
-          <button class="icon-btn ${l.watch ? 'on' : ''}" data-action="watch" data-id="${esc(l.id)}" aria-pressed="${l.watch}" title="${l.watch ? 'Remove from watchlist' : 'Add to watchlist'}">${I('star')}</button>
-          <button class="icon-btn ${inCmp ? 'on' : ''}" data-action="compare-toggle" data-id="${esc(l.id)}" aria-pressed="${inCmp}" title="${inCmp ? 'Remove from compare' : 'Add to compare'}">${I('columns')}</button>
-          <button class="icon-btn" data-action="log-price" data-id="${esc(l.id)}" title="Log a price you saw">${I('plus')}</button>
-          ${link ? `<a class="btn btn-sm" href="${esc(link.href)}" target="_blank" rel="noopener noreferrer" title="${link.exact ? 'Open the saved product page' : 'Search for this model at the retailer'}">${esc(link.label)}${I('external')}</a>` : ''}
-        </div>
-      </footer>
-    </article>`;
-  }
-
   /* =========================================================
    * 8. Filters
    * ======================================================= */
@@ -562,134 +528,6 @@
     }[sort];
     return out.sort(cmp);
   }
-  function filterBar(defSort) {
-    const f = ui.filters;
-    const brands = [...new Set([...BRANDS, ...state.laptops.map(l => l.brand)])].filter(b => state.laptops.some(l => l.brand === b));
-    const opt = (v, label, cur) => `<option value="${esc(v)}" ${String(cur) === String(v) ? 'selected' : ''}>${esc(label)}</option>`;
-    return `<div class="filters" role="search">
-      <label class="field field-search"><span class="sr-only">Search</span>${I('search')}<input type="search" id="f-q" value="${esc(f.q)}" placeholder="Search model, brand, CPU…"></label>
-      <label class="field"><span class="sr-only">GPU</span><select id="f-gpu">${opt('all', 'All GPUs', f.gpu)}${GPU_ORDER.map(k => opt(k, GPUS[k].label, f.gpu)).join('')}</select></label>
-      <label class="field"><span class="sr-only">RAM</span><select id="f-ram">${opt(0, 'Any RAM', f.ram)}${opt(16, '16GB+', f.ram)}${opt(32, '32GB+', f.ram)}${opt(64, '64GB+', f.ram)}</select></label>
-      <label class="field"><span class="sr-only">Brand</span><select id="f-brand">${opt('all', 'All brands', f.brand)}${brands.map(b => opt(b, b, f.brand)).join('')}</select></label>
-      <label class="field"><span class="sr-only">Retailer</span><select id="f-retailer">${opt('all', 'All retailers', f.retailer)}${RETAILERS.map(r => opt(r.id, r.name, f.retailer)).join('')}</select></label>
-      <div class="field field-range"><label><span class="sr-only">Minimum price</span><input type="number" id="f-min" inputmode="numeric" min="0" step="50" placeholder="Min $" value="${esc(f.min)}"></label><span class="muted">–</span><label><span class="sr-only">Maximum price</span><input type="number" id="f-max" inputmode="numeric" min="0" step="50" placeholder="Max $" value="${esc(f.max)}"></label></div>
-      <label class="field"><span class="sr-only">Price status</span><select id="f-status">${opt('all', 'All prices', f.status)}${opt('verified', 'Verified only', f.status)}${opt('auto', 'Auto-checked', f.status)}${opt('archive', 'Archived price', f.status)}${opt('seen', 'Seen in browser', f.status)}${opt('unverified', 'Unverified', f.status)}${opt('demo', 'Demo data', f.status)}</select></label>
-      <label class="field"><span class="sr-only">Sort</span><select id="f-sort">${SORTS.map(([v, l]) => opt(v, l, f.sort || defSort)).join('')}</select></label>
-      <button class="btn btn-ghost btn-sm" data-action="reset-filters">Reset</button>
-    </div>`;
-  }
-  function bindFilters(rerun) {
-    const map = { 'f-q': 'q', 'f-gpu': 'gpu', 'f-ram': 'ram', 'f-brand': 'brand', 'f-retailer': 'retailer', 'f-min': 'min', 'f-max': 'max', 'f-status': 'status', 'f-sort': 'sort' };
-    const deb = debounce(rerun, 120);
-    for (const [id, key] of Object.entries(map)) {
-      const el = document.getElementById(id);
-      if (!el) continue;
-      el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => {
-        ui.filters[key] = key === 'ram' ? Number(el.value) : el.value;
-        if (key === 'q') $('#global-search').value = el.value;
-        el.tagName === 'SELECT' ? rerun() : deb();
-      });
-    }
-  }
-
-  /* =========================================================
-   * 9. Views
-   * ======================================================= */
-  const NAV = [
-    { group: 'Overview' },
-    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { id: 'deals', label: 'Best Deals', icon: 'flame' },
-    { id: 'bfreport', label: 'Black Friday Report', icon: 'bolt' },
-    { id: 'gpus', label: 'RTX 5050–5090', icon: 'chip' },
-    { id: 'compare', label: 'Compare Laptops', icon: 'columns' },
-    { id: 'history', label: 'Price History', icon: 'chart' },
-    { id: 'watchlist', label: 'My Watchlist', icon: 'star' },
-    { group: 'Best picks' },
-    { id: 'gaming', label: 'Best for AAA Gaming', icon: 'gamepad' },
-    { id: 'labs', label: 'Best for AI & SOC Labs', icon: 'shield' },
-    { group: 'By budget' },
-    { id: 'under1000', label: 'Under $1,000', icon: 'dollar' },
-    { id: 'under1500', label: 'Under $1,500', icon: 'dollar' },
-    { id: 'under2000', label: 'Under $2,000', icon: 'dollar' },
-    { group: 'More' },
-    { id: 'retailers', label: 'Retailer Directory', icon: 'store' },
-    { id: 'settings', label: 'Settings', icon: 'sliders' }
-  ];
-
-  const LIST_VIEWS = {
-    deals:     { title: 'Best Deals', sub: 'Sorted by how far each price sits below its highest recorded price, then by value.', sort: 'drop' },
-    gpus:      { title: 'RTX 5050–5090', sub: 'Browse by GPU tier. VRAM and TGP decide how a laptop GPU actually performs.', sort: 'gpu', gpuChips: true },
-    gaming:    { title: 'Best for AAA Gaming', sub: 'Weighted toward GPU tier, TGP, cooling and display quality.', sort: 'score', profile: 'gaming', explain: true },
-    labs:      { title: 'Best for AI & SOC Labs', sub: 'Combined score for local AI, SOC/security labs and VM/Docker workloads (Wazuh, Suricata, Security Onion).', sort: 'score', profile: 'labs', explain: true },
-    under1000: { title: 'Under $1,000', sub: 'Current price at or under $1,000, sorted by value.', sort: 'value', cap: 1000 },
-    under1500: { title: 'Under $1,500', sub: 'Current price at or under $1,500, sorted by value.', sort: 'value', cap: 1500 },
-    under2000: { title: 'Under $2,000', sub: 'Current price at or under $2,000, sorted by value.', sort: 'value', cap: 2000 }
-  };
-
-  let currentView = 'dashboard';
-  const view = () => $('#view');
-
-  function pageHead(title, sub, extra = '') {
-    return `<div class="page-head"><div><h1>${esc(title)}</h1>${sub ? `<p class="muted">${esc(sub)}</p>` : ''}</div>${extra}</div>`;
-  }
-  function demoNotice() {
-    if (!state.settings.showDemo || !state.laptops.some(l => l.demo)) return '';
-    return `<div class="notice notice-demo">${I('info')}<div><strong>Demo data is showing.</strong> Entries marked <span class="badge badge-demo">Demo data</span> have made-up prices. They show how the tracker works and are not real deals. Hide or remove them in <a href="#/settings">Settings</a>, then add laptops you find.</div></div>`;
-  }
-
-  function renderListView(key) {
-    const cfg = LIST_VIEWS[key];
-    const pk = cfg.profile || state.settings.profile;
-    let extra = '';
-    if (cfg.gpuChips) {
-      extra = `<div class="gpu-chips" role="tablist">${['all', ...GPU_ORDER].map(k => {
-        const n = visible().filter(l => k === 'all' || l.gpu === k).length;
-        return `<button role="tab" class="chip ${ui.filters.gpu === k ? 'on' : ''}" data-action="set-gpu" data-gpu="${k}" aria-selected="${ui.filters.gpu === k}">${k === 'all' ? 'All' : GPUS[k].label}<span class="chip-n">${n}</span></button>`;
-      }).join('')}</div>${gpuTable()}`;
-    }
-    if (key === 'labs') {
-      extra = `<div class="seg" role="tablist">${[['labs', 'Combined'], ['ai', 'Local AI / ML'], ['soc', 'SOC labs'], ['vm', 'VMs & Docker']].map(([k, l]) => `<button role="tab" class="seg-btn ${ui.aiTab === k ? 'on' : ''}" data-action="ai-tab" data-tab="${k}" aria-selected="${ui.aiTab === k}">${l}</button>`).join('')}</div>`;
-    }
-    view().innerHTML = pageHead(cfg.title, cfg.sub, `<button class="btn btn-ghost btn-sm" data-action="how-scores">${I('info')}How scores work</button>`) + demoNotice() + extra + filterBar(cfg.sort) + '<div class="result-meta" id="result-meta"></div><div id="results"></div>';
-    const run = () => {
-      const p = key === 'labs' ? ui.aiTab : pk;
-      const list = applyFilters(visible(), { ...ui.filters, sort: ui.filters.sort || cfg.sort }, p, cfg.cap);
-      $('#result-meta').textContent = `${list.length} laptop${list.length === 1 ? '' : 's'}${cfg.cap ? ' at or under ' + money(cfg.cap) : ''}`;
-      if (!list.length) { $('#results').innerHTML = emptyState('No laptops match these filters.', 'Reset the filters or add a laptop you found.'); return; }
-      $('#results').innerHTML = cfg.explain ? `<ol class="ranked">${list.map((l, i) => rankedRow(l, p, i + 1)).join('')}</ol>` : `<div class="grid">${list.map(l => card(l, p)).join('')}</div>`;
-    };
-    ui.rerunResults = run;
-    bindFilters(run);
-    run();
-  }
-
-  function rankedRow(l, pk, rank) {
-    const st = priceStats(l);
-    const s = scoreFor(l, pk);
-    const breakdown = pk === 'labs'
-      ? `<div class="sub-scores">${['ai', 'soc', 'vm'].map(k => `<div><span class="muted small">${PROFILES[k].short}</span><strong>${s.sub[k]}</strong></div>`).join('')}</div>`
-      : breakdownBars(s, true);
-    const link = retailerLink(l);
-    return `<li class="ranked-row ${l.demo ? 'card-demo' : ''}">
-      <div class="rank">${rank}</div>
-      <div class="ranked-main">
-        <div class="ranked-top"><button class="linklike ranked-name" data-action="detail" data-id="${esc(l.id)}">${esc(l.name)}</button>${statusBadge(l)}</div>
-        <div class="muted small">${GPUS[l.gpu].label} ${l.vram}GB${l.tgp ? ' · ' + l.tgp + 'W' : ''} · ${esc(l.cpu)} · ${l.ram}GB${l.ramUpgradeable ? '→' + l.ramMax : ''} · ${fmtStorage(l.storage)} · ${l.displaySize}" ${esc(l.panel)} · cooling ${l.cooling}/5</div>
-        ${breakdown}
-        ${s.notes && s.notes.length ? `<ul class="score-notes">${s.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
-      </div>
-      <div class="ranked-side">
-        ${scoreRing(s.total, 56)}
-        ${priceHtml(l, st)}
-        <div class="small">${deltaHtml(st, true)}</div>
-        <div class="row-actions">
-          <button class="icon-btn ${l.watch ? 'on' : ''}" data-action="watch" data-id="${esc(l.id)}" title="Watch">${I('star')}</button>
-          <button class="icon-btn ${state.compare.includes(l.id) ? 'on' : ''}" data-action="compare-toggle" data-id="${esc(l.id)}" title="Compare">${I('columns')}</button>
-          ${link ? `<a class="icon-btn" href="${esc(link.href)}" target="_blank" rel="noopener noreferrer" title="${esc(link.label)}">${I('external')}</a>` : ''}
-        </div>
-      </div>
-    </li>`;
-  }
   function breakdownBars(s, compact) {
     return `<div class="bars ${compact ? 'bars-compact' : ''}">${s.parts.filter(p => p.max > 0).sort((a, b) => b.max - a.max).map(p => `
       <div class="bar-row" title="${esc(p.why)}">
@@ -699,18 +537,6 @@
         ${compact ? '' : `<span class="bar-why muted small">${esc(p.why)}</span>`}
       </div>`).join('')}</div>`;
   }
-  function gpuTable() {
-    return `<div class="gpu-table">${GPU_ORDER.map(k => {
-      const g = GPUS[k];
-      const ls = visible().filter(l => l.gpu === k && curPrice(l));
-      const lo = ls.length ? Math.min(...ls.map(curPrice)) : null;
-      return `<div class="gpu-cell ${ui.filters.gpu === k ? 'on' : ''}"><span class="gpu-chip g${k}">${g.label}</span><div class="gpu-meta"><span>${g.vram}GB VRAM</span><span class="muted">${g.tier}</span></div><div class="gpu-perf"><span style="width:${g.perf}%"></span></div><div class="small muted">Perf. index ${g.perf} · ${lo ? 'from ' + money(lo) : 'none tracked'}</div></div>`;
-    }).join('')}</div><p class="muted small gpu-foot">The performance index is a rough estimate for ranking (RTX 5090 Laptop = 100), not a benchmark. The same GPU can perform very differently depending on TGP and cooling.</p>`;
-  }
-  function emptyState(title, body, action = '') {
-    return `<div class="empty">${I('search', 'ico-lg')}<h3>${esc(title)}</h3><p class="muted">${esc(body)}</p>${action || `<button class="btn btn-primary" data-action="add-laptop">${I('plus')}Add a laptop</button>`}</div>`;
-  }
-
   /* ---------- Dashboard ---------- */
   function shoppingDates(year) {
     const nov1 = new Date(year, 10, 1);
@@ -749,54 +575,6 @@
       ${srcs.length ? `<ul class="source-list">${srcs.map(x => `<li><span class="src-dot src-${esc(x.status)}"></span><span>${esc(x.name)}</span><span class="muted small">${esc(x.detail || x.status)}</span></li>`).join('')}</ul>` : ''}
       <p class="muted small">Prices come from Best Buy's official API and from the price data retailers publish on product pages you track. Sites that block automated checks are flagged so you can log those by hand with ${I('plus')}.</p>`;
   }
-  function renderDashboard() {
-    const list = visible();
-    const pk = state.settings.profile;
-    const cd = countdown();
-    const verified = state.laptops.reduce((n, l) => n + l.history.filter(o => o.status === 'verified').length, 0);
-    const watch = list.filter(l => l.watch);
-    const hits = watch.filter(l => l.target && curPrice(l) != null && curPrice(l) <= l.target);
-    const lastT = list.map(lastCheck).filter(Boolean).sort().pop();
-    const drops = list.map(l => ({ l, st: priceStats(l) })).filter(x => x.st && x.st.dPrev < 0).sort((a, b) => a.st.dPrevPct - b.st.dPrevPct).slice(0, 5);
-    const top = applyFilters(list, { ...ui.filters, q: '', gpu: 'all', brand: 'all', retailer: 'all', ram: 0, min: '', max: '', status: 'all', sort: 'score' }, pk).slice(0, 3);
-    const stale = list.filter(l => !l.demo && (!lastCheck(l) || Date.now() - new Date(lastCheck(l)) > 3 * DAY || (l.checkStatus && l.checkStatus !== 'ok'))).slice(0, 5);
-
-    view().innerHTML = `
-      ${pageHead('Dashboard', 'Track RTX 50-series laptop prices into Black Friday and Cyber Monday.')}
-      <section class="hero">
-        <div class="hero-count">
-          <div class="eyebrow">${I('bolt')}${esc(cd.title)}</div>
-          ${cd.live ? `<div class="count-live">Deals are live</div>` : `<div class="count"><div><strong>${cd.d}</strong><span>days</span></div><div><strong>${cd.h}</strong><span>hours</span></div><div><strong>${cd.m}</strong><span>min</span></div></div>`}
-          <div class="muted small">${esc(cd.sub)}</div>
-        </div>
-        <div class="hero-how">
-          ${autoPanel()}
-        </div>
-      </section>
-      ${demoNotice()}
-      <section class="kpis">
-        ${kpi('Laptops tracked', list.length, `${list.filter(l => l.auto).length} automatic · ${list.filter(l => !l.demo && !l.auto).length} added by you`)}
-        ${kpi('Watchlist', watch.length, hits.length ? `${hits.length} at or below target` : 'Set targets in My Watchlist', hits.length ? 'good' : '')}
-        ${kpi('Auto-checked prices', state.laptops.reduce((n, l) => n + l.history.filter(o => o.status === 'auto').length, 0), verified + ' verified by you')}
-        ${kpi('Last price check', lastT ? ago(lastT) : '—', lastT ? fmtDate(lastT) : 'No prices logged')}
-      </section>
-      <div class="dash-grid">
-        <section class="panel">
-          <div class="panel-head"><h2>Top picks · ${esc(PROFILES[pk].short)}</h2><a href="#/${pk === 'gaming' ? 'gaming' : 'deals'}" class="small">See all</a></div>
-          ${top.length ? `<div class="grid grid-tight">${top.map(l => card(l, pk)).join('')}</div>` : emptyState('Nothing tracked yet', 'Add a laptop to get started.')}
-        </section>
-        <section class="panel">
-          <div class="panel-head"><h2>Recent price drops</h2><a href="#/deals" class="small">Best deals</a></div>
-          ${drops.length ? `<ul class="mini-list">${drops.map(({ l, st }) => `<li><button class="linklike" data-action="detail" data-id="${esc(l.id)}">${esc(l.name)}</button>${l.demo ? '<span class="badge badge-demo">Demo</span>' : ''}<span class="mini-right">${money(st.cur)} <span class="delta down">${I('down')}${Math.abs(st.dPrevPct).toFixed(1)}%</span></span></li>`).join('')}</ul>` : '<p class="muted">No drops recorded yet. Log at least two prices for a laptop to see changes.</p>'}
-          <div class="panel-head mt"><h2>Needs a price check</h2></div>
-          ${stale.length ? `<ul class="mini-list">${stale.map(l => `<li><button class="linklike" data-action="detail" data-id="${esc(l.id)}">${esc(l.name)}</button><span class="mini-right"><span class="muted small">${l.checkStatus && l.checkStatus !== 'ok' ? 'auto-check ' + esc(l.checkStatus) : lastCheck(l) ? ago(lastCheck(l)) : 'never'}</span> <button class="btn btn-sm" data-action="log-price" data-id="${esc(l.id)}">Log price</button></span></li>`).join('')}</ul>` : '<p class="muted small">Laptops show here when their last check is over 3 days old or the automatic checker was blocked.</p>'}
-          <div class="panel-head mt"><h2>By GPU</h2><a href="#/gpus" class="small">Browse</a></div>
-          <div class="gpu-dist">${GPU_ORDER.map(k => { const n = list.filter(l => l.gpu === k).length; const max = Math.max(1, ...GPU_ORDER.map(x => list.filter(l => l.gpu === x).length)); return `<a href="#/gpus" data-action="set-gpu" data-gpu="${k}" class="gpu-dist-row"><span class="gpu-chip g${k}">${GPUS[k].label}</span><span class="bar"><span style="width:${n / max * 100}%"></span></span><span class="bar-val">${n}</span></a>`; }).join('')}</div>
-        </section>
-      </div>`;
-  }
-  const kpi = (label, value, sub, tone = '') => `<div class="kpi ${tone}"><div class="kpi-label">${esc(label)}</div><div class="kpi-value">${esc(value)}</div><div class="kpi-sub muted small">${esc(sub)}</div></div>`;
-
   /* ---------- Black Friday report ---------- */
   function bfAnalysis(l, dates) {
     const { bf, cm } = dates;
@@ -864,7 +642,7 @@
             <td><span class="verdict v-${v[0]}" title="${esc(v[2])}">${esc(v[1])}</span>${r.verdict === 'nodata' && r.firstT ? `<div class="muted small">History starts ${esc(fmtDay(r.firstT))}</div>` : ''}</td>
           </tr>`;
         }).join('')}</tbody></table></div>
-        <ul class="plain-list small mt">${Object.entries(VERDICT).map(([k, v]) => `<li><span class="verdict v-${v[0]}">${esc(v[1])}</span> ${esc(v[2])}</li>`).join('')}</ul>` : emptyState('Nothing tracked yet', 'Add laptops or a Best Buy key to fill this report.')}`;
+        <ul class="plain-list small mt">${Object.entries(VERDICT).map(([k, v]) => `<li><span class="verdict v-${v[0]}">${esc(v[1])}</span> ${esc(v[2])}</li>`).join('')}</ul>` : emptyState('Nothing tracked yet', 'Install the extension and open laptop pages to fill this report.')}`;
   }
 
   /* ---------- Compare ---------- */
@@ -908,53 +686,6 @@
     if (sel) sel.addEventListener('change', () => { if (sel.value) { toggleCompare(sel.value, true); } });
   }
 
-  /* ---------- Price history ---------- */
-  function renderHistory() {
-    const list = visible().slice().sort((a, b) => a.name.localeCompare(b.name));
-    if (!list.length) { view().innerHTML = pageHead('Price History', '') + emptyState('No laptops tracked', 'Add a laptop and log prices to build its history.'); return; }
-    if (!ui.historyId || !list.some(l => l.id === ui.historyId)) ui.historyId = (list.find(l => l.watch) || list[0]).id;
-    const l = getL(ui.historyId);
-    const st = priceStats(l);
-    const cmpRow = (label, d, pctv) => d == null ? `<div class="cmp-row"><span>${label}</span><span class="muted">—</span></div>` : `<div class="cmp-row"><span>${label}</span><span class="delta ${d < 0 ? 'down' : d > 0 ? 'up' : 'flat'}">${d === 0 ? 'Same' : (d < 0 ? '−' : '+') + money(Math.abs(d)).slice(1) + (pctv != null ? ` (${Math.abs(pctv).toFixed(1)}%)` : '')}</span></div>`;
-    view().innerHTML = `
-      ${pageHead('Price History', 'Every price you log is saved with its date and time, in this browser.', `<div class="row-actions"><label class="field"><span class="sr-only">Choose laptop</span><select id="hist-pick">${list.map(x => `<option value="${esc(x.id)}" ${x.id === l.id ? 'selected' : ''}>${esc(x.name)}${x.demo ? ' (demo)' : ''}</option>`).join('')}</select></label><button class="btn btn-primary btn-sm" data-action="log-price" data-id="${esc(l.id)}">${I('plus')}Log price</button></div>`)}
-      <div class="notice">${I('info')}<div>History is stored in <strong>this browser on this device</strong>. It survives closing and reopening the browser, but not clearing site data, private windows or switching devices. Use <a href="#/settings">Settings → Export</a> to back it up or move it.</div></div>
-      <section class="panel">
-        <div class="panel-head"><div><h2>${esc(l.name)}</h2><div class="muted small">${GPUS[l.gpu].label} · ${esc(RETAILER_MAP[l.retailer].name)} ${statusBadge(l)}</div></div>${priceHtml(l, st, true)}</div>
-        ${historyLinks(l)}
-        <div class="chart" id="hist-chart"></div>
-        <div class="legend small muted"><span><i class="dot dot-auto"></i>Auto-checked</span><span><i class="dot dot-archive"></i>Archived (Wayback)</span><span><i class="dot dot-seen"></i>Seen in browser</span><span><i class="dot dot-verified"></i>Verified</span><span><i class="dot dot-unverified"></i>Unverified</span><span><i class="dot dot-demo"></i>Demo</span><span><i class="dash"></i>Lowest / highest recorded</span></div>
-      </section>
-      ${st ? `<div class="hist-grid">
-        <section class="panel">
-          <h2>Summary</h2>
-          <div class="stats">
-            <div><span class="muted small">Current</span><strong>${money(st.cur)}</strong></div>
-            <div><span class="muted small">Lowest recorded</span><strong class="ok">${money(st.lo)}</strong></div>
-            <div><span class="muted small">Highest recorded</span><strong>${money(st.hi)}</strong></div>
-            <div><span class="muted small">Below highest</span><strong>${money(st.belowHigh)} <span class="muted small">(${st.belowHighPct.toFixed(1)}%)</span></strong></div>
-            <div><span class="muted small">Savings vs list</span><strong>${st.vsList != null ? money(st.vsList) + ` <span class="muted small">(${st.vsListPct.toFixed(1)}%)</span>` : '—'}</strong></div>
-            <div><span class="muted small">Observations</span><strong>${st.count}</strong></div>
-          </div>
-        </section>
-        <section class="panel">
-          <h2>Today's price vs before</h2>
-          ${cmpRow('vs previous check', st.dPrev, st.dPrevPct)}
-          ${cmpRow('vs about 7 days ago', st.dWeek, st.dWeekPct)}
-          ${(() => { const o = priceAt(l, new Date(Date.now() - 20 * DAY)); return o ? cmpRow('vs about 20 days ago', st.cur - o.price, (st.cur - o.price) / o.price * 100) : cmpRow('vs about 20 days ago', null); })()}
-          ${cmpRow('vs first recorded', st.count > 1 ? st.dFirst : null, st.dFirstPct)}
-          ${cmpRow('vs lowest recorded', st.count > 1 ? st.aboveLow : null, st.lo ? st.aboveLow / st.lo * 100 : null)}
-          ${cmpRow('vs highest recorded', st.count > 1 ? -st.belowHigh : null, st.belowHighPct)}
-          <p class="muted small">Last checked ${esc(fmtDate(st.lastT))} (${ago(st.lastT)}).</p>
-        </section>
-      </div>` : ''}
-      <section class="panel">
-        <div class="panel-head"><h2>Observations</h2><span class="muted small">Newest first</span></div>
-        ${obsTable(l)}
-      </section>`;
-    drawChart($('#hist-chart'), l.history);
-    $('#hist-pick').addEventListener('change', e => { ui.historyId = e.target.value; renderHistory(); });
-  }
   function obsTable(l) {
     if (!l.history.length) return '<p class="muted">No prices logged yet.</p>';
     const rows = l.history.map((o, i) => ({ o, i })).reverse();
@@ -1031,143 +762,6 @@
     hit.addEventListener('pointerdown', move);
     hit.addEventListener('pointerleave', leave);
   }
-  window.addEventListener('resize', debounce(() => {
-    ui.charts.filter(c => document.body.contains(c.el)).forEach(c => drawChart(c.el, c.obs, c.opts));
-  }, 200));
-
-  /* ---------- Watchlist ---------- */
-  function renderWatchlist() {
-    const ls = visible().filter(l => l.watch).sort((a, b) => (curPrice(a) ?? 1e9) - (curPrice(b) ?? 1e9));
-    view().innerHTML = pageHead('My Watchlist', 'Star laptops to follow them here. Set a target price and you\'ll see it highlighted when a logged price reaches it.') +
-      (ls.length ? `<div class="watch-list">${ls.map(l => {
-        const st = priceStats(l);
-        const hit = l.target && st && st.cur <= l.target;
-        const gap = l.target && st ? st.cur - l.target : null;
-        const link = retailerLink(l);
-        return `<article class="watch-row ${hit ? 'hit' : ''} ${l.demo ? 'card-demo' : ''}">
-          <div class="watch-main">
-            <div class="ranked-top"><button class="linklike ranked-name" data-action="detail" data-id="${esc(l.id)}">${esc(l.name)}</button>${statusBadge(l)}${hit ? '<span class="badge badge-ok">Target hit</span>' : ''}</div>
-            <div class="muted small">${GPUS[l.gpu].label} · ${l.ram}GB · ${fmtStorage(l.storage)} · ${esc(RETAILER_MAP[l.retailer].name)} · ${st ? 'checked ' + ago(st.lastT) : 'no price yet'}</div>
-          </div>
-          ${sparkline(l.history)}
-          <div class="watch-price">${priceHtml(l, st)}<div class="small">${deltaHtml(st, true)}</div></div>
-          <label class="watch-target"><span class="muted small">Target price</span><input type="number" min="0" step="10" inputmode="numeric" data-target-id="${esc(l.id)}" value="${l.target ?? ''}" placeholder="e.g. 1500"><span class="small ${hit ? 'ok' : 'muted'}">${gap == null ? '&nbsp;' : hit ? 'At or below target' : money(gap) + ' to go'}</span></label>
-          <div class="row-actions">
-            <button class="btn btn-sm" data-action="log-price" data-id="${esc(l.id)}">${I('plus')}Log price</button>
-            ${link ? `<a class="btn btn-sm btn-ghost" href="${esc(link.href)}" target="_blank" rel="noopener noreferrer" data-action="check" data-id="${esc(l.id)}" title="Opens the retailer and a form to log what you see">${I('refresh')}Check now</a>` : ''}
-            <button class="icon-btn on" data-action="watch" data-id="${esc(l.id)}" title="Remove from watchlist">${I('star')}</button>
-          </div>
-        </article>`;
-      }).join('')}</div>` : emptyState('Your watchlist is empty', 'Use the star icon on any laptop to watch it.', '<a class="btn btn-primary" href="#/deals">Browse deals</a>'));
-    $$('[data-target-id]').forEach(inp => inp.addEventListener('change', () => {
-      const l = getL(inp.dataset.targetId);
-      const v = num(inp.value);
-      l.target = v && v > 0 ? v : null;
-      touch(l); save(); renderWatchlist(); toast(l.target ? `Target set at ${money(l.target)}` : 'Target cleared');
-    }));
-  }
-
-  /* ---------- Retailers ---------- */
-  function renderRetailers() {
-    view().innerHTML = pageHead('Retailer Directory', 'Official store links plus a ready-made search for RTX 50-series laptops at each one.') +
-      `<div class="notice">${I('info')}<div>These links open the retailer's own site. Browsers block websites from reading other sites' prices (CORS), and automated scraping usually breaks retailer terms, so prices are entered by you, imported, or loaded from a JSON feed you control.</div></div>
-      <div class="grid">${RETAILERS.filter(r => r.id !== 'other').map(r => {
-        const ls = visible().filter(l => l.retailer === r.id && curPrice(l));
-        const lo = ls.length ? ls.reduce((a, b) => curPrice(a) <= curPrice(b) ? a : b) : null;
-        return `<article class="card retailer-card">
-          <header class="card-head"><h3>${esc(r.name)}</h3><span class="badge">${ls.length} tracked</span></header>
-          <p class="muted small">${esc(r.note)}</p>
-          ${lo ? `<div class="small">Lowest tracked: <button class="linklike" data-action="detail" data-id="${esc(lo.id)}">${esc(lo.name)}</button> · ${money(curPrice(lo))}${lo.demo ? ' <span class="badge badge-demo">Demo</span>' : ''}</div>` : '<div class="small muted">Nothing tracked here yet.</div>'}
-          <footer class="card-foot">
-            <span class="muted small">Price access: manual entry</span>
-            <div class="card-actions">
-              <a class="btn btn-sm btn-ghost" href="${esc(r.home)}" target="_blank" rel="noopener noreferrer">Store${I('external')}</a>
-              <a class="btn btn-sm" href="${esc(r.search('RTX 50 gaming laptop'))}" target="_blank" rel="noopener noreferrer">RTX 50 search${I('external')}</a>
-            </div>
-          </footer>
-        </article>`;
-      }).join('')}</div>`;
-  }
-
-  /* ---------- Settings ---------- */
-  function renderSettings() {
-    const s = state.settings;
-    const demoCount = state.laptops.filter(l => l.demo).length;
-    const kb = (storageBytes() / 1024).toFixed(1);
-    view().innerHTML = pageHead('Settings', 'Appearance, scoring, backups and data sources.') + `
-      <div class="settings">
-        <section class="panel">
-          <h2>Appearance</h2>
-          <div class="seg">${['dark', 'light'].map(t => `<button class="seg-btn ${s.theme === t ? 'on' : ''}" data-action="set-theme" data-theme="${t}">${I(t === 'dark' ? 'moon' : 'sun')}${t === 'dark' ? 'Dark' : 'Light'}</button>`).join('')}</div>
-        </section>
-
-        <section class="panel">
-          <h2>Primary use</h2>
-          <p class="muted small">Cards and the dashboard show the score for this workload. Every score is still visible in each laptop's details and on Compare.</p>
-          <div class="radio-list">${PROFILE_KEYS.map(k => `<label class="radio"><input type="radio" name="profile" value="${k}" ${s.profile === k ? 'checked' : ''}><span>${I(PROFILES[k].icon)}${esc(PROFILES[k].label)}</span></label>`).join('')}</div>
-          <button class="btn btn-ghost btn-sm" data-action="how-scores">${I('info')}See the scoring weights</button>
-        </section>
-
-        <section class="panel">
-          <h2>Demo data</h2>
-          <p class="muted small">${demoCount} demo laptops are loaded. Their prices are made up to show how the site works. They are never real deals.</p>
-          <label class="switch"><input type="checkbox" id="show-demo" ${s.showDemo ? 'checked' : ''}><span>Show demo data</span></label>
-          <div class="row-actions">
-            ${demoCount ? '<button class="btn btn-sm btn-danger-ghost" data-action="clear-demo">Remove demo data</button>' : '<button class="btn btn-sm" data-action="load-demo">Load demo data</button>'}
-          </div>
-        </section>
-
-        <section class="panel">
-          <h2>Backup, export & import</h2>
-          <p class="muted small">JSON is a full backup (laptops, specs, every price, watchlist, settings). CSV has one row per price observation, which works well in Excel or Google Sheets and can be imported back.</p>
-          <div class="row-actions">
-            <button class="btn btn-sm" data-action="export-json">${I('download')}Export JSON</button>
-            <button class="btn btn-sm" data-action="export-csv">${I('download')}Export CSV</button>
-          </div>
-          <div class="import-row">
-            <div class="seg seg-sm">${[['merge', 'Merge with my data'], ['replace', 'Replace my data']].map(([m, l]) => `<button class="seg-btn ${s.importMode === m ? 'on' : ''}" data-action="import-mode" data-mode="${m}">${l}</button>`).join('')}</div>
-            <button class="btn btn-sm btn-primary" data-action="import-file">${I('upload')}Import JSON or CSV</button>
-          </div>
-          <p class="muted small">Storage used: about ${kb} KB in this browser${storageOK ? '' : ' (<span class="warn">last save failed</span>)'}.</p>
-        </section>
-
-        <section class="panel">
-          <h2>Automatic price checks</h2>
-          <p class="muted small">A free GitHub Action in your repository checks prices every 3 hours and saves them to <code>feed.json</code>. This site loads that file when it opens and every 15 minutes after that.</p>
-          <label class="switch"><input type="checkbox" id="auto-feed" ${s.autoFeed ? 'checked' : ''}><span>Load automatic prices</span></label>
-          <form class="feed-form" id="feed-form">
-            <label class="field grow"><span class="sr-only">Feed URL</span>${I('link')}<input type="text" id="feed-url" value="${esc(s.feedUrl)}" placeholder="feed.json" spellcheck="false"></label>
-            <button class="btn btn-sm" type="submit">Save</button>
-            <button class="btn btn-sm btn-primary" type="button" data-action="refresh">${I('refresh')}Reload now</button>
-          </form>
-          <p class="muted small">${state.feedMeta && state.feedMeta.generated ? 'Last check by the Action: ' + esc(fmtDate(state.feedMeta.generated)) + '. ' : ''}${s.lastFeedAt ? 'Loaded here ' + esc(ago(s.lastFeedAt)) + '.' : ''} Leave the URL as <code>feed.json</code> unless you host the feed somewhere else.</p>
-          <h3 class="mt">Track specific product pages</h3>
-          <p class="muted small">Best Buy laptops are found automatically once you add the API key. To track any other product page (Lenovo, Dell, HP, B&amp;H…), add the laptop here with its product URL, then download <code>tracked.json</code> and upload it to your repository, replacing the old one.</p>
-          <button class="btn btn-sm" data-action="export-tracked">${I('download')}Download tracked.json</button>
-        </section>
-
-        <section class="panel">
-          <h2>Browser extension</h2>
-          <p class="muted small">The <strong>RTX Deal Hunter Companion</strong> extension (in the <code>extension</code> folder of this project) records prices from Amazon, Best Buy, B&amp;H, Newegg, Walmart and other store pages you open in Chrome or Edge. It saves them to <code>manual.json</code> in your repository, and this site loads that file along with <code>feed.json</code>. Those prices are labeled <span class="badge badge-seen">Seen in browser</span>.</p>
-          <p class="muted small">${state.extMeta && state.extMeta.generated ? `Last extension sync: ${esc(fmtDate(state.extMeta.generated))} (${state.extMeta.items} laptops).` : 'No extension data yet. Install it with the steps in README → Browser extension.'}</p>
-        </section>
-
-        <section class="panel">
-          <h2>About your data</h2>
-          <ul class="plain-list small">
-            <li>Everything is saved in this browser's local storage on this device. Nothing is sent to a server.</li>
-            <li>Another browser, another device, or a private window starts empty. Use export and import to move data.</li>
-            <li>Clearing browser data for this site deletes your history. Export a backup first.</li>
-            <li>Prices do not update by themselves. "Last checked" is the time you or your feed recorded a price.</li>
-          </ul>
-          <button class="btn btn-sm btn-danger-ghost" data-action="reset-all">${I('trash')}Erase all data in this browser</button>
-        </section>
-      </div>`;
-    $('#show-demo').addEventListener('change', e => { s.showDemo = e.target.checked; save(); updateChrome(); renderSettings(); });
-    $$('input[name=profile]').forEach(r => r.addEventListener('change', () => { s.profile = r.value; save(); toast('Primary use: ' + PROFILES[r.value].label); }));
-    $('#auto-feed').addEventListener('change', e => { s.autoFeed = e.target.checked; save(); if (s.autoFeed) refreshFeed(true); updateChrome(); });
-    $('#feed-form').addEventListener('submit', e => { e.preventDefault(); s.feedUrl = $('#feed-url').value.trim(); save(); toast(s.feedUrl ? 'Feed URL saved' : 'Feed URL cleared'); });
-  }
 
   /* =========================================================
    * 10. Modals
@@ -1192,62 +786,6 @@
   function confirmModal(title, body, yesLabel, onYes, danger = true) {
     openModal(`<h2>${esc(title)}</h2><p class="muted">${esc(body)}</p><div class="modal-actions"><button class="btn btn-ghost" data-action="close-modal">Cancel</button><button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" id="confirm-yes">${esc(yesLabel)}</button></div>`, { label: title });
     $('#confirm-yes').addEventListener('click', () => { closeModal(); onYes(); });
-  }
-
-  function openDetail(id) {
-    const l = getL(id); if (!l) return;
-    const st = priceStats(l), link = retailerLink(l), pk = state.settings.profile;
-    const tabs = PROFILE_KEYS.map(k => `<button class="seg-btn ${k === pk ? 'on' : ''}" data-detail-tab="${k}">${PROFILES[k].short}<span class="seg-n">${scoreFor(l, k).total}</span></button>`).join('');
-    openModal(`
-      <div class="detail-head">
-        <div><div class="muted small">${esc(l.brand)}</div><h2>${esc(l.name)}</h2><div class="badges">${statusBadge(l)}${l.watch ? '<span class="badge">Watching</span>' : ''}</div></div>
-        <div class="detail-price">${priceHtml(l, st, true)}<div class="small">${deltaHtml(st)}</div><div class="muted small">${st ? `${esc(RETAILER_MAP[l.retailer].name)} · checked <span title="${esc(fmtDate(st.lastT))}">${ago(st.lastT)}</span>` : 'No price logged'}</div></div>
-      </div>
-      ${l.demo ? `<div class="notice notice-demo">${I('info')}<div>${esc(DEMO_NOTE)}</div></div>` : ''}
-      ${l.specsFrom ? `<div class="notice">${I('info')}<div>${esc(l.specsFrom)} Use Edit to correct them; the scores update right away.</div></div>` : ''}
-      ${l.checkStatus && l.checkStatus !== 'ok' ? `<div class="notice">${I('info')}<div><strong>The last automatic check failed (${esc(l.checkStatus)}).</strong> ${esc(l.checkDetail)}. Check this one at the retailer and log the price by hand.</div></div>` : ''}
-      <div class="row-actions detail-actions">
-        ${link ? `<a class="btn btn-primary btn-sm" href="${esc(link.href)}" target="_blank" rel="noopener noreferrer" data-action="check" data-id="${esc(l.id)}">${I('refresh')}Check at ${esc(RETAILER_MAP[l.retailer].name)}</a>` : ''}
-        <button class="btn btn-sm" data-action="log-price" data-id="${esc(l.id)}">${I('plus')}Log price</button>
-        <button class="btn btn-sm btn-ghost" data-action="watch" data-id="${esc(l.id)}">${I('star')}${l.watch ? 'Unwatch' : 'Watch'}</button>
-        <button class="btn btn-sm btn-ghost" data-action="compare-toggle" data-id="${esc(l.id)}">${I('columns')}${state.compare.includes(l.id) ? 'Remove from compare' : 'Compare'}</button>
-        <button class="btn btn-sm btn-ghost" data-action="edit" data-id="${esc(l.id)}">${I('edit')}Edit</button>
-        <button class="btn btn-sm btn-danger-ghost" data-action="delete" data-id="${esc(l.id)}">${I('trash')}Delete</button>
-      </div>
-      ${historyLinks(l)}
-      <div class="chart chart-sm" id="detail-chart"></div>
-      <div class="detail-grid">
-        <section>
-          <h3>Specifications</h3>
-          <dl class="spec-table">
-            <div><dt>GPU</dt><dd><span class="gpu-chip g${l.gpu}">${GPUS[l.gpu].label}</span> ${l.vram}GB VRAM${l.tgp ? ', ' + l.tgp + 'W TGP' : ''}</dd></div>
-            <div><dt>CPU</dt><dd>${esc(l.cpu || '—')} <span class="muted small">(${esc(CPU_MAP[l.cpuClass].label)})</span></dd></div>
-            <div><dt>RAM</dt><dd>${l.ram}GB · ${l.ramUpgradeable ? 'upgradeable to ' + l.ramMax + 'GB' : l.ramUpgradeKnown === false ? 'upgradeability unknown' : 'soldered'}</dd></div>
-            <div><dt>Storage</dt><dd>${fmtStorage(l.storage)} · ${l.storageSlots} M.2 slot${l.storageSlots > 1 ? 's' : ''}</dd></div>
-            <div><dt>Display</dt><dd>${l.displaySize}" ${RES[l.displayRes].label} ${esc(l.panel)} ${l.hz}Hz</dd></div>
-            <div><dt>Cooling</dt><dd>${l.cooling}/5${l.coolingNote ? ' · ' + esc(l.coolingNote) : ''}</dd></div>
-            <div><dt>Weight</dt><dd>${l.weight ? l.weight + ' kg' : '—'}</dd></div>
-            <div><dt>List price</dt><dd>${money(l.listPrice)}</dd></div>
-            <div><dt>Product URL</dt><dd>${l.url ? `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(new URL(l.url).hostname)}</a>` : '<span class="muted">Not set. Links use retailer search.</span>'}</dd></div>
-            ${l.notes && !l.demo ? `<div><dt>Notes</dt><dd>${esc(l.notes)}</dd></div>` : ''}
-          </dl>
-        </section>
-        <section>
-          <h3>Estimated scores</h3>
-          <div class="seg seg-scroll" role="tablist">${tabs}</div>
-          <div id="detail-score"></div>
-        </section>
-      </div>
-      <h3>Price observations</h3>
-      ${obsTable(l)}`, { wide: true, label: l.name });
-    const showTab = k => {
-      $$('[data-detail-tab]').forEach(b => b.classList.toggle('on', b.dataset.detailTab === k));
-      const s = scoreFor(l, k);
-      $('#detail-score').innerHTML = `<div class="score-head">${scoreRing(s.total, 64)}<div><strong>${esc(PROFILES[k].label)}</strong><div class="muted small">${esc(strengths(l, k))}</div></div></div>${breakdownBars(s)}${s.notes.length ? `<ul class="score-notes">${s.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}<p class="muted small">Each bar shows points earned out of the points available for that factor in this workload. Hover or tap a row for the reason.</p>`;
-    };
-    $$('[data-detail-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.detailTab)));
-    showTab(pk);
-    requestAnimationFrame(() => drawChart($('#detail-chart'), l.history, { h: 200 }));
   }
 
   function openLogPrice(id) {
@@ -1375,19 +913,6 @@
       </ul>
       <p class="muted small">These are transparent estimates to help shortlist laptops, not benchmark results. Check reviews for thermals, noise and build quality. You can change the weights in <code>script.js</code> (look for <code>PROFILES</code>).</p>
       <div class="modal-actions"><button class="btn btn-primary" data-action="close-modal">Got it</button></div>`, { wide: true, label: 'How scores work' });
-  }
-
-  function openRefreshInfo() {
-    const f = feedState();
-    openModal(`
-      <h2>Price updates</h2>
-      <p class="auto-status auto-${f.tone}"><strong>${esc(f.title)}.</strong> ${esc(f.body)}</p>
-      <ol class="how-list">
-        <li><strong>Automatic:</strong> the GitHub Action checks prices every 3 hours. You can also run it right away from your repository's Actions tab ("Run workflow").</li>
-        <li><strong>By hand:</strong> for a store that blocks automated checks, open the laptop and press <em>Check at retailer</em>, then log what you see.</li>
-        <li><strong>Import:</strong> load a JSON or CSV file of prices in Settings.</li>
-      </ol>
-      <div class="modal-actions"><button class="btn btn-ghost" data-action="close-modal">Close</button><a class="btn btn-primary" href="#/settings" data-action="close-modal">Open Settings</a></div>`, { label: 'Price updates' });
   }
 
   /* =========================================================
@@ -1557,7 +1082,7 @@
     } catch (e) {
       const msg = e.name === 'AbortError' ? 'Loading the price feed timed out.' : `Couldn't load the price feed (${e.message}).`;
       state.feedMeta = { ...(state.feedMeta || {}), error: msg };
-      save(); if (currentView === 'dashboard') rerender();
+      save(); if (currentView === 'overview') rerender();
       if (!silent) toast(msg, 'error');
     } finally { feedBusy = false; clearTimeout(to); btns.forEach(b => b.classList.remove('spinning')); }
   }
@@ -1580,8 +1105,524 @@
     else go(null);
   }
 
+
   /* =========================================================
-   * 12. Actions, chrome, routing
+   * 9. Layout helpers
+   * ======================================================= */
+  let currentView = 'overview';
+  let routeParam = '';
+  const view = () => $('#view');
+  const pageHead = (title, sub, extra = '') => `<header class="page-head"><div><h1>${esc(title)}</h1>${sub ? `<p class="lead">${esc(sub)}</p>` : ''}</div>${extra ? `<div class="page-actions">${extra}</div>` : ''}</header>`;
+  const kpi = (label, value, sub, tone = '') => `<div class="stat ${tone}"><div class="stat-label">${esc(label)}</div><div class="stat-value">${esc(value)}</div>${sub ? `<div class="stat-sub">${esc(sub)}</div>` : ''}</div>`;
+  function emptyState(title, body, action) {
+    return `<div class="empty"><div class="empty-ico">${I('search')}</div><h3>${esc(title)}</h3><p>${esc(body)}</p>${action === undefined ? `<div class="row-actions center"><a class="btn btn-primary" href="#/guide">${I('info')}How to add laptops</a><button class="btn" data-action="load-demo">Load sample data</button></div>` : action}</div>`;
+  }
+  const storeName = l => (RETAILER_MAP[l.retailer] || RETAILER_MAP.other).name;
+  const specLine = l => [l.cpu ? l.cpu.replace(/^(Intel|AMD)\s+/i, '').replace(/Core\s+/i, '') : '', l.ram ? l.ram + 'GB' : '', l.storage ? fmtStorage(l.storage) : '', l.displaySize ? `${l.displaySize}" ${l.panel !== 'IPS' ? l.panel : ''}`.trim() : ''].filter(Boolean).join(' · ');
+  const median = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+  const pctTxt = (v, digits = 1) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(digits) + '%';
+  const deltaChip = (d, pct) => d == null || d === 0 ? '' : `<span class="delta ${d < 0 ? 'down' : 'up'}">${I(d < 0 ? 'down' : 'up')}${money(Math.abs(d))}${pct != null ? ` <span class="delta-pct">${Math.abs(pct).toFixed(1)}%</span>` : ''}</span>`;
+  const SOURCE_LABEL = { seen: 'Seen in browser', auto: 'Auto-checked', archive: 'Archived', verified: 'Verified by you', unverified: 'Logged by you', demo: 'Sample data' };
+
+  /* Is this a good price? Plain-language verdict from the recorded history. */
+  function priceVerdict(l) {
+    const st = priceStats(l);
+    if (!st) return { tone: 'muted', title: 'No price yet', body: 'Open this laptop\'s store page with the extension installed, or log a price with the button above.' };
+    if (st.count < 2) return { tone: 'muted', title: 'Not enough history yet', body: `One price recorded so far (${money(st.cur)}). Each new check adds to the history, and the verdict appears after the second one.` };
+    const above = (st.cur - st.lo) / st.lo * 100;
+    const lowObs = l.history.find(o => o.price === st.lo);
+    const when = lowObs ? fmtDay(lowObs.t) : '';
+    if (st.cur <= st.lo) return { tone: 'good', title: 'Lowest price recorded', body: `${money(st.cur)} is the lowest of ${st.count} recorded prices, ${money(st.belowHigh)} below the highest (${money(st.hi)}).` };
+    if (above <= 3) return { tone: 'good', title: 'Good price', body: `Within ${above.toFixed(1)}% of the lowest recorded price (${money(st.lo)} on ${when}).` };
+    if (above <= 10) return { tone: 'ok', title: 'Fair price', body: `${above.toFixed(1)}% above the lowest recorded price (${money(st.lo)} on ${when}). Set a target price to get alerted if it drops.` };
+    return { tone: 'warn', title: 'Wait if you can', body: `${above.toFixed(1)}% above the lowest recorded price (${money(st.lo)} on ${when}). It has been cheaper before.` };
+  }
+
+  /* Market statistics used on the overview */
+  function marketStats(list) {
+    const now = Date.now();
+    const priced = list.filter(l => curPrice(l) != null);
+    const allObs = list.flatMap(l => l.history.map(o => ({ o, l })));
+    const last24 = allObs.filter(x => now - new Date(x.o.t) < DAY).length;
+    const weekDrops = priced.filter(l => { const w = priceAt(l, new Date(now - 7 * DAY)); return w && curPrice(l) < w.price; });
+    const ranked = priced.map(l => ({ l, st: priceStats(l) })).filter(x => x.st.count > 1 && x.st.belowHighPct > 0).sort((a, b) => b.st.belowHighPct - a.st.belowHighPct || valueIndex(b.l, 'gaming') - valueIndex(a.l, 'gaming'));
+    const best = ranked[0] || (priced.length ? { l: [...priced].sort((a, b) => valueIndex(b, 'gaming') - valueIndex(a, 'gaming'))[0] } : null);
+    const byGpu = GPU_ORDER.map(k => {
+      const ls = priced.filter(l => l.gpu === k);
+      const cheapest = ls.length ? ls.reduce((a, b) => curPrice(a) <= curPrice(b) ? a : b) : null;
+      return { k, n: ls.length, cheapest, med: median(ls.map(curPrice)) };
+    });
+    const byStore = RETAILERS.map(r => ({ r, n: list.filter(l => l.retailer === r.id).length })).filter(x => x.n).sort((a, b) => b.n - a.n);
+    return { priced, allObs, last24, weekDrops, best, byGpu, byStore };
+  }
+  /* Price index: average change of each laptop's price relative to its first recorded price, per day */
+  function priceIndex(list, days = 30) {
+    const withH = list.filter(l => l.history.length);
+    if (!withH.length) return [];
+    const first = Math.min(...withH.map(l => +new Date(l.history[0].t)));
+    const start = Math.max(first, Date.now() - days * DAY);
+    const pts = [];
+    for (let t = new Date(new Date(start).toDateString()).getTime() + DAY - 1; t < Date.now() + DAY; t += DAY) {
+      const end = new Date(Math.min(t, Date.now()));
+      const ratios = withH.filter(l => new Date(l.history[0].t) <= end).map(l => priceAt(l, end).price / l.history[0].price - 1);
+      if (ratios.length) pts.push({ t: end.toISOString(), v: ratios.reduce((a, b) => a + b, 0) / ratios.length * 100, n: ratios.length });
+    }
+    return pts;
+  }
+  function lineChart(el, pts, { fmt = v => v.toFixed(1), h = 200, zero = false } = {}) {
+    if (!el) return;
+    if (pts.length < 2) { el.innerHTML = '<div class="chart-empty">The trend appears after prices are recorded on two different days.</div>'; return; }
+    const W = Math.max(280, el.clientWidth || 600), P = { l: 46, r: 12, t: 12, b: 26 };
+    const xs = pts.map(p => +new Date(p.t)), ys = pts.map(p => p.v);
+    let lo = Math.min(...ys, zero ? 0 : Infinity), hi = Math.max(...ys, zero ? 0 : -Infinity);
+    if (hi - lo < 1) { lo -= 1; hi += 1; }
+    const pad = (hi - lo) * .15; lo -= pad; hi += pad;
+    const X = t => P.l + (t - xs[0]) / ((xs[xs.length - 1] - xs[0]) || 1) * (W - P.l - P.r);
+    const Y = v => P.t + (1 - (v - lo) / (hi - lo)) * (h - P.t - P.b);
+    const d = pts.map((p, i) => `${i ? 'L' : 'M'}${X(xs[i]).toFixed(1)},${Y(p.v).toFixed(1)}`).join('');
+    const ticks = niceTicks(lo, hi, 3);
+    const gid = 'li' + Math.random().toString(36).slice(2, 7);
+    el.innerHTML = `<svg class="chart-svg" viewBox="0 0 ${W} ${h}" width="${W}" height="${h}" role="img" aria-label="Trend chart">
+      <defs><linearGradient id="${gid}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" class="area-top"/><stop offset="1" class="area-bot"/></linearGradient></defs>
+      ${ticks.map(v => `<line class="grid-line" x1="${P.l}" x2="${W - P.r}" y1="${Y(v)}" y2="${Y(v)}"/><text class="axis" x="${P.l - 6}" y="${Y(v) + 4}" text-anchor="end">${esc(fmt(v))}</text>`).join('')}
+      ${zero && lo < 0 && hi > 0 ? `<line class="ref-line" x1="${P.l}" x2="${W - P.r}" y1="${Y(0)}" y2="${Y(0)}"/>` : ''}
+      <text class="axis" x="${P.l}" y="${h - 6}">${fmtDay(pts[0].t)}</text><text class="axis" x="${W - P.r}" y="${h - 6}" text-anchor="end">${fmtDay(pts[pts.length - 1].t)}</text>
+      <path d="${d}L${X(xs[xs.length - 1])},${h - P.b}L${X(xs[0])},${h - P.b}Z" fill="url(#${gid})"/>
+      <path d="${d}" class="price-line"/>
+      <circle class="pt pt-auto" cx="${X(xs[xs.length - 1])}" cy="${Y(ys[ys.length - 1])}" r="4"/>
+      <line class="hover-line" x1="0" x2="0" y1="${P.t}" y2="${h - P.b}" visibility="hidden"/>
+      <rect class="hit" x="${P.l}" y="${P.t}" width="${W - P.l - P.r}" height="${h - P.t - P.b}" fill="transparent"/>
+    </svg><div class="tip" hidden></div>`;
+    const svg = el.querySelector('svg'), tip = el.querySelector('.tip'), hl = el.querySelector('.hover-line');
+    const hit = el.querySelector('.hit');
+    hit.addEventListener('pointermove', ev => {
+      const r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
+      let bi = 0; xs.forEach((x, i) => { if (Math.abs(X(x) - mx) < Math.abs(X(xs[bi]) - mx)) bi = i; });
+      hl.setAttribute('x1', X(xs[bi])); hl.setAttribute('x2', X(xs[bi])); hl.setAttribute('visibility', 'visible');
+      tip.hidden = false; tip.innerHTML = `<strong>${esc(fmt(pts[bi].v))}</strong><div class="muted">${fmtDay(pts[bi].t)} · ${pts[bi].n} laptops</div>`;
+      tip.style.left = Math.min(Math.max(X(xs[bi]) / W * r.width, 60), r.width - 60) + 'px'; tip.style.top = (Y(pts[bi].v) / h * r.height - 8) + 'px';
+    });
+    hit.addEventListener('pointerleave', () => { tip.hidden = true; hl.setAttribute('visibility', 'hidden'); });
+    ui.charts.push({ el, redraw: () => lineChart(el, pts, { fmt, h, zero }) });
+  }
+
+  /* Laptop card */
+  function lcard(l, pk = state.settings.profile) {
+    const st = priceStats(l), s = scoreFor(l, pk);
+    const v = st && st.count > 1 ? priceVerdict(l) : null;
+    const lastSrc = latest(l) ? SOURCE_LABEL[latest(l).status] : '';
+    return `<article class="lcard ${l.demo ? 'is-demo' : ''}">
+      <a class="lcard-link" href="#/laptop/${encodeURIComponent(l.id)}" aria-label="${esc(l.name)}"></a>
+      <div class="lc-top"><span class="gpu-chip g${l.gpu}">${GPUS[l.gpu].label}</span><span class="lc-store">${esc(storeName(l))}</span>${l.demo ? '<span class="tag tag-demo">Sample</span>' : ''}</div>
+      <h3 class="lc-name">${esc(l.name)}</h3>
+      <p class="lc-spec">${esc(specLine(l))}</p>
+      <div class="lc-price">
+        <div><strong class="${l.demo ? 'demo-price' : ''}">${st ? money(st.cur) : '—'}</strong>${st && st.dPrev ? deltaChip(st.dPrev, st.dPrevPct) : ''}</div>
+        ${sparkline(l.history)}
+      </div>
+      <div class="lc-foot">
+        <span class="lc-score sc-${grade(s.total)}" title="${esc(PROFILES[pk === 'labs' ? 'vm' : pk]?.label || 'Score')}">${s.total}<small>/100</small></span>
+        ${v ? `<span class="lc-verdict v-${v.tone}">${esc(v.title)}</span>` : `<span class="lc-time">${st ? esc(lastSrc) + ' · ' + ago(st.lastT) : 'No price yet'}</span>`}
+        <button class="star ${l.watch ? 'on' : ''}" data-action="watch" data-id="${esc(l.id)}" aria-pressed="${l.watch}" title="${l.watch ? 'Remove from watchlist' : 'Add to watchlist'}">${I('star')}</button>
+      </div>
+    </article>`;
+  }
+
+  /* =========================================================
+   * 10. Pages
+   * ======================================================= */
+  const NAV = [
+    { id: 'overview', label: 'Overview', icon: 'dashboard' },
+    { id: 'laptops', label: 'Laptops', icon: 'chip' },
+    { id: 'compare', label: 'Compare', icon: 'columns' },
+    { id: 'black-friday', label: 'Black Friday', icon: 'bolt' },
+    { id: 'watchlist', label: 'Watchlist', icon: 'star' }
+  ];
+  const ALIASES = { dashboard: 'overview', deals: 'laptops', gpus: 'laptops', gaming: 'laptops', labs: 'laptops', under1000: 'laptops', under1500: 'laptops', under2000: 'laptops', bfreport: 'black-friday', history: 'laptops', retailers: 'settings' };
+
+  /* ---------- Overview ---------- */
+  function checklist(list) {
+    if (state.settings.hideChecklist) return '';
+    const mine = list.filter(l => !l.demo);
+    const steps = [
+      { done: !!(state.extMeta && state.extMeta.generated) || mine.some(l => l.history.some(o => o.status === 'seen')), title: 'Install the browser extension', body: 'It records prices from Amazon, Best Buy and other store pages you open.', link: '#/guide' },
+      { done: mine.length >= 5, title: `Track 5 laptops (${Math.min(mine.length, 5)}/5)`, body: 'Open RTX 50-series laptop pages you\'re interested in. Each one is added automatically.', link: '#/guide' },
+      { done: list.some(l => l.target), title: 'Set a target price', body: 'Open a laptop, then set the price you\'d pay. You get an alert when it\'s reached.', link: '#/watchlist' },
+      { done: state.compare.length >= 2, title: 'Compare two laptops', body: 'Use Compare on a laptop page to see specs and scores side by side.', link: '#/laptops' }
+    ];
+    const done = steps.filter(s => s.done).length;
+    if (done === steps.length) return '';
+    return `<section class="panel checklist">
+      <div class="panel-head"><div><h2>Get started</h2><p class="muted small">${done} of ${steps.length} done</p></div><button class="btn btn-ghost btn-sm" data-action="hide-checklist">Hide</button></div>
+      <div class="progress"><span style="width:${done / steps.length * 100}%"></span></div>
+      <ol class="steps">${steps.map(s => `<li class="${s.done ? 'done' : ''}"><span class="step-dot">${s.done ? I('check') : ''}</span><a href="${s.link}"><strong>${esc(s.title)}</strong><span>${esc(s.body)}</span></a></li>`).join('')}</ol>
+    </section>`;
+  }
+  function renderOverview() {
+    const list = visible();
+    const ms = marketStats(list);
+    const cd = countdown();
+    const lastT = list.map(lastCheck).filter(Boolean).sort().pop();
+    const idx = priceIndex(list);
+    const idxNow = idx.length ? idx[idx.length - 1].v : null;
+    const recent = ms.allObs.sort((a, b) => new Date(b.o.t) - new Date(a.o.t)).slice(0, 8);
+    const best = ms.best;
+    const bestSt = best ? priceStats(best.l) : null;
+    const bestV = best ? priceVerdict(best.l) : null;
+
+    view().innerHTML = `
+      <section class="hero">
+        <div>
+          <p class="eyebrow">${I('bolt')}${cd.live ? esc(cd.title) : `Black Friday in ${cd.d} day${cd.d === 1 ? '' : 's'}`} <span class="muted">· ${esc(cd.sub)}</span></p>
+          <h1>RTX 50-series laptop prices,<br>tracked for you.</h1>
+          <p class="lead">${list.length ? `${list.length} laptops from ${ms.byStore.length} store${ms.byStore.length === 1 ? '' : 's'}, ${ms.allObs.length} prices recorded. Last update ${lastT ? ago(lastT) : '—'}.` : 'Nothing tracked yet. Install the browser extension and open a few laptop pages to begin.'}</p>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#/laptops">${I('chip')}Browse laptops</a>
+          <a class="btn" href="#/black-friday">${I('bolt')}Black Friday report</a>
+        </div>
+      </section>
+
+      ${checklist(list)}
+
+      ${list.length ? `
+      <section class="stats">
+        ${kpi('Laptops tracked', list.length, `${ms.priced.length} with a price`)}
+        ${kpi('Prices recorded', ms.allObs.length, `${ms.last24} in the last 24 hours`)}
+        ${kpi('Cheaper than a week ago', ms.weekDrops.length, ms.priced.length ? `of ${ms.priced.length} laptops` : '', ms.weekDrops.length ? 'good' : '')}
+        ${kpi('Average price change', idxNow == null ? '—' : pctTxt(idxNow), 'since each laptop was first seen', idxNow != null && idxNow < -1 ? 'good' : idxNow > 1 ? 'bad' : '')}
+      </section>
+
+      <div class="grid-2">
+        <section class="panel">
+          <div class="panel-head"><h2>Best deal right now</h2><a class="small" href="#/laptops?sort=drop">All deals →</a></div>
+          ${best ? `<a class="feature" href="#/laptop/${encodeURIComponent(best.l.id)}">
+            <div class="feature-top"><span class="gpu-chip g${best.l.gpu}">${GPUS[best.l.gpu].label}</span><span class="muted small">${esc(storeName(best.l))}</span></div>
+            <h3>${esc(best.l.name)}</h3>
+            <div class="feature-price"><strong>${money(bestSt.cur)}</strong>${bestSt.belowHigh > 0 ? `<span class="delta down">${I('down')}${money(bestSt.belowHigh)} below its high</span>` : ''}</div>
+            <p class="verdict-line v-${bestV.tone}">${esc(bestV.title)}. <span>${esc(bestV.body)}</span></p>
+            <p class="muted small">Gaming score ${scoreFor(best.l, 'gaming').total}/100 · ${esc(specLine(best.l))}</p>
+          </a>` : '<p class="muted">Deals show here once laptops have at least two recorded prices.</p>'}
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Price trend</h2><span class="muted small">Last 30 days</span></div>
+          <p class="muted small">Average change in tracked laptops' prices compared with the first price recorded for each. Below zero means prices are falling.</p>
+          <div class="chart" id="index-chart"></div>
+        </section>
+      </div>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Cheapest laptop for each GPU</h2><a class="small" href="#/laptops">Browse all →</a></div>
+        <div class="table-wrap flat"><table class="gpu-tbl">
+          <thead><tr><th>GPU</th><th>Cheapest tracked</th><th class="num">Price</th><th class="num">Median</th><th class="num">Tracked</th></tr></thead>
+          <tbody>${ms.byGpu.map(g => `<tr>
+            <td><a href="#/laptops?gpu=${g.k}" class="gpu-chip g${g.k}">${GPUS[g.k].label}</a><div class="muted small">${GPUS[g.k].vram}GB VRAM</div></td>
+            <td>${g.cheapest ? `<a href="#/laptop/${encodeURIComponent(g.cheapest.id)}">${esc(g.cheapest.name)}</a><div class="muted small">${esc(storeName(g.cheapest))}</div>` : '<span class="muted">None tracked yet</span>'}</td>
+            <td class="num">${g.cheapest ? `<strong>${money(curPrice(g.cheapest))}</strong>` : '—'}</td>
+            <td class="num">${g.med ? money(g.med) : '—'}</td>
+            <td class="num">${g.n}</td></tr>`).join('')}</tbody>
+        </table></div>
+      </section>
+
+      <div class="grid-2">
+        <section class="panel">
+          <div class="panel-head"><h2>Recent price activity</h2></div>
+          ${recent.length ? `<ul class="activity">${recent.map(({ o, l }) => {
+            const i = l.history.indexOf(o), prev = l.history[i - 1];
+            const d = prev ? o.price - prev.price : null;
+            return `<li><span class="act-ico ${d == null ? 'new' : d < 0 ? 'down' : d > 0 ? 'up' : 'same'}">${I(d == null ? 'plus' : d < 0 ? 'down' : d > 0 ? 'up' : 'check')}</span>
+              <div class="act-main"><a href="#/laptop/${encodeURIComponent(l.id)}">${esc(l.name)}</a><div class="muted small">${d == null ? 'First price' : d < 0 ? `Dropped ${money(-d)}` : d > 0 ? `Rose ${money(d)}` : 'No change'} · ${esc(storeName(l))} · ${esc(SOURCE_LABEL[o.status] || '')}</div></div>
+              <div class="act-side"><strong>${money(o.price)}</strong><div class="muted small">${ago(o.t)}</div></div></li>`;
+          }).join('')}</ul>` : '<p class="muted">No prices yet.</p>'}
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Where prices come from</h2><a class="small" href="#/settings">Details →</a></div>
+          ${sourcesSummary(list)}
+          <h3 class="sub">Laptops by store</h3>
+          <div class="bars-list">${ms.byStore.map(x => `<div class="bl-row"><span>${esc(x.r.name)}</span><span class="bar"><span style="width:${x.n / ms.byStore[0].n * 100}%"></span></span><span class="num">${x.n}</span></div>`).join('') || '<p class="muted small">—</p>'}</div>
+        </section>
+      </div>` : emptyState('No laptops yet', 'Install the browser extension (see the guide), then open RTX 50-series laptop pages on Amazon, Best Buy or other stores. They show up here within a few minutes.')}`;
+    lineChart($('#index-chart'), idx, { fmt: v => pctTxt(v), zero: true });
+  }
+  function sourcesSummary(list) {
+    const count = s => list.reduce((n, l) => n + l.history.filter(o => o.status === s).length, 0);
+    const f = feedState();
+    const rows = [
+      ['seen', 'Browser extension', state.extMeta && state.extMeta.generated ? `Last sync ${ago(state.extMeta.generated)}` : 'Not connected yet'],
+      ['auto', 'Automatic checks (GitHub)', f.title],
+      ['archive', 'Web archive (past prices)', 'Looked up once per laptop'],
+      ['verified', 'Logged by you', 'Prices you entered with +']
+    ];
+    return `<ul class="sources">${rows.map(([k, name, sub]) => `<li><i class="dot dot-${k === 'verified' ? 'verified' : k}"></i><div><strong>${esc(name)}</strong><div class="muted small">${esc(sub)}</div></div><span class="num">${count(k) + (k === 'verified' ? count('unverified') : 0)}</span></li>`).join('')}</ul>`;
+  }
+
+  /* ---------- Laptops (browse) ---------- */
+  const DEFAULT_F = { q: '', gpu: 'all', budget: 0, use: '', ram32: false, store: 'all', sort: 'score' };
+  ui.f = { ...DEFAULT_F };
+  function parseQuery() {
+    const q = new URLSearchParams(location.hash.split('?')[1] || '');
+    const f = { ...DEFAULT_F, q: ui.f.q };
+    if (q.get('gpu') && GPUS[q.get('gpu')]) f.gpu = q.get('gpu');
+    if (q.get('budget')) f.budget = +q.get('budget') || 0;
+    if (q.get('use')) f.use = q.get('use');
+    if (q.get('sort')) f.sort = q.get('sort');
+    if (q.get('store')) f.store = q.get('store');
+    if (q.get('ram32')) f.ram32 = true;
+    return f;
+  }
+  function renderLaptops() {
+    const f = ui.f;
+    const chip = (key, val, label) => `<button class="chip ${String(f[key]) === String(val) ? 'on' : ''}" data-action="f" data-k="${key}" data-v="${esc(val)}">${label}</button>`;
+    const stores = RETAILERS.filter(r => visible().some(l => l.retailer === r.id));
+    view().innerHTML = pageHead('Laptops', 'Every RTX 50-series laptop you track. Filter by GPU, budget and what you\'ll use it for.', `<button class="btn btn-sm" data-action="add-laptop">${I('plus')}Add manually</button>`) + `
+      <div class="filterbar">
+        <label class="search"><span class="sr-only">Search</span>${I('search')}<input type="search" id="f-q" value="${esc(f.q)}" placeholder="Search model, brand or CPU"></label>
+        <div class="chips"><span class="chips-label">GPU</span>${chip('gpu', 'all', 'All')}${GPU_ORDER.map(k => chip('gpu', k, GPUS[k].label.replace('RTX ', ''))).join('')}</div>
+        <div class="chips"><span class="chips-label">Budget</span>${chip('budget', 0, 'Any')}${chip('budget', 1000, 'Under $1,000')}${chip('budget', 1500, 'Under $1,500')}${chip('budget', 2000, 'Under $2,000')}${chip('budget', 3000, 'Under $3,000')}</div>
+        <div class="chips"><span class="chips-label">Best for</span>${chip('use', '', 'Anything')}${chip('use', 'gaming', 'AAA gaming')}${chip('use', 'labs', 'AI & SOC labs')}${chip('use', 'everyday', 'Everyday')}
+          <span class="chips-sep"></span><button class="chip ${f.ram32 ? 'on' : ''}" data-action="f" data-k="ram32" data-v="${!f.ram32}">32GB+ RAM</button></div>
+        <div class="filter-row">
+          <label class="sel"><span>Store</span><select id="f-store"><option value="all">All stores</option>${stores.map(r => `<option value="${r.id}" ${f.store === r.id ? 'selected' : ''}>${esc(r.name)}</option>`).join('')}</select></label>
+          <label class="sel"><span>Sort</span><select id="f-sort">${[['score', 'Best score'], ['drop', 'Biggest drop from high'], ['value', 'Best value for money'], ['price-asc', 'Lowest price'], ['price-desc', 'Highest price'], ['checked', 'Recently updated']].map(([v, t]) => `<option value="${v}" ${f.sort === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+          <button class="btn btn-ghost btn-sm" data-action="f-reset">Reset</button>
+        </div>
+      </div>
+      <p class="result-meta" id="result-meta"></p>
+      <div id="results"></div>`;
+    const run = () => {
+      const pk = f.use || state.settings.profile;
+      const list = applyFilters(visible(), { q: f.q, gpu: f.gpu, brand: 'all', retailer: f.store, ram: f.ram32 ? 32 : 0, min: '', max: '', status: 'all', sort: f.sort }, pk, f.budget || null);
+      const prices = list.map(curPrice).filter(p => p != null);
+      $('#result-meta').innerHTML = list.length ? `<strong>${list.length}</strong> laptop${list.length === 1 ? '' : 's'}${prices.length ? ` · from <strong>${money(Math.min(...prices))}</strong> · median ${money(median(prices))}` : ''}${f.use ? ` · scored for ${esc(f.use === 'labs' ? 'AI & SOC labs' : PROFILES[f.use].label.toLowerCase())}` : ''}` : '';
+      $('#results').innerHTML = list.length ? `<div class="cards">${list.map(l => lcard(l, pk)).join('')}</div>` : (visible().length ? emptyState('No laptops match', 'Try fewer filters.', '<button class="btn" data-action="f-reset">Reset filters</button>') : emptyState('No laptops yet', 'Install the browser extension and open RTX 50-series laptop pages, or add one manually.'));
+    };
+    ui.rerunResults = run;
+    $('#f-q').addEventListener('input', debounce(() => { f.q = $('#f-q').value; run(); }, 120));
+    $('#f-store').addEventListener('change', e => { f.store = e.target.value; run(); });
+    $('#f-sort').addEventListener('change', e => { f.sort = e.target.value; run(); });
+    run();
+  }
+
+  /* ---------- Laptop page ---------- */
+  function renderLaptop(id) {
+    const l = getL(id);
+    if (!l) { view().innerHTML = emptyState('Laptop not found', 'It may have been removed.', '<a class="btn" href="#/laptops">Back to laptops</a>'); return; }
+    const st = priceStats(l), v = priceVerdict(l), link = retailerLink(l);
+    const inCmp = state.compare.includes(l.id);
+    const pk = state.settings.profile;
+    const w20 = priceAt(l, new Date(Date.now() - 20 * DAY));
+    const avg = l.history.length ? l.history.reduce((a, o) => a + o.price, 0) / l.history.length : null;
+    view().innerHTML = `
+      <nav class="crumbs"><a href="#/laptops">Laptops</a> <span>/</span> ${GPUS[l.gpu].label}</nav>
+      <section class="lp-head">
+        <div class="lp-title">
+          <div class="lc-top"><span class="gpu-chip g${l.gpu}">${GPUS[l.gpu].label}</span><span class="lc-store">${esc(storeName(l))}</span>${statusBadge(l)}</div>
+          <h1>${esc(l.name)}</h1>
+          <p class="lead">${esc(specLine(l))}</p>
+        </div>
+        <div class="lp-price">
+          <div class="big-price ${l.demo ? 'demo-price' : ''}">${st ? money(st.cur) : '—'}</div>
+          ${st && st.dPrev ? `<div>${deltaChip(st.dPrev, st.dPrevPct)} <span class="muted small">vs previous</span></div>` : ''}
+          ${l.listPrice && st && l.listPrice > st.cur ? `<div class="muted small">List ${money(l.listPrice)} · save ${money(l.listPrice - st.cur)}</div>` : ''}
+          <div class="muted small">${st ? `Updated ${ago(st.lastT)} · ${esc(SOURCE_LABEL[latest(l).status] || '')}` : ''}</div>
+        </div>
+      </section>
+      <div class="lp-actions">
+        ${link ? `<a class="btn btn-primary" href="${esc(link.href)}" target="_blank" rel="noopener noreferrer">${link.exact ? 'Open at ' + esc(storeName(l)) : 'Search ' + esc(storeName(l))}${I('external')}</a>` : ''}
+        <button class="btn ${l.watch ? 'on' : ''}" data-action="watch" data-id="${esc(l.id)}">${I('star')}${l.watch ? 'Watching' : 'Watch'}</button>
+        <button class="btn ${inCmp ? 'on' : ''}" data-action="compare-toggle" data-id="${esc(l.id)}">${I('columns')}${inCmp ? 'In compare' : 'Compare'}</button>
+        <button class="btn btn-ghost" data-action="log-price" data-id="${esc(l.id)}">${I('plus')}Log a price</button>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" data-action="edit" data-id="${esc(l.id)}">${I('edit')}Edit</button>
+        <button class="btn btn-ghost btn-sm danger" data-action="delete" data-id="${esc(l.id)}">${I('trash')}</button>
+      </div>
+
+      <section class="verdict-box v-${v.tone}">
+        <div class="vb-title">${esc(v.title)}</div><p>${esc(v.body)}</p>
+        <label class="target">Alert me at <span class="dollar">$</span><input type="number" min="0" step="10" inputmode="numeric" id="target" value="${l.target ?? ''}" placeholder="target price"></label>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Price history</h2><span class="legend small"><span><i class="dot dot-seen"></i>Browser</span><span><i class="dot dot-auto"></i>Automatic</span><span><i class="dot dot-archive"></i>Archive</span><span><i class="dot dot-verified"></i>You</span></span></div>
+        <div class="chart" id="lp-chart"></div>
+        ${historyLinks(l)}
+        ${st ? `<div class="stats stats-sm">
+          ${kpi('Lowest', money(st.lo), st.count > 1 ? fmtDay(l.history.find(o => o.price === st.lo).t) : '', 'good')}
+          ${kpi('Highest', money(st.hi), st.count > 1 ? fmtDay(l.history.find(o => o.price === st.hi).t) : '')}
+          ${kpi('Average', money(avg), `${st.count} price${st.count === 1 ? '' : 's'} recorded`)}
+          ${kpi('vs 20 days ago', w20 ? pctTxt((st.cur - w20.price) / w20.price * 100) : '—', w20 ? `was ${money(w20.price)}` : 'No price that far back', w20 && st.cur < w20.price ? 'good' : w20 && st.cur > w20.price ? 'bad' : '')}
+        </div>` : ''}
+      </section>
+
+      <div class="grid-2">
+        <section class="panel">
+          <h2>Specifications</h2>
+          ${l.specsFrom ? `<p class="muted small">${esc(l.specsFrom)}</p>` : ''}
+          <dl class="spec-table">
+            <div><dt>GPU</dt><dd>${GPUS[l.gpu].label}, ${l.vram}GB VRAM${l.tgp ? `, ${l.tgp}W` : ''}</dd></div>
+            <div><dt>CPU</dt><dd>${esc(l.cpu || CPU_MAP[l.cpuClass].label)}</dd></div>
+            <div><dt>Memory</dt><dd>${l.ram}GB · ${l.ramUpgradeable ? 'upgradeable to ' + l.ramMax + 'GB' : l.ramUpgradeKnown === false ? 'upgradeability unknown' : 'soldered'}</dd></div>
+            <div><dt>Storage</dt><dd>${fmtStorage(l.storage)} · ${l.storageSlots} M.2 slot${l.storageSlots > 1 ? 's' : ''}</dd></div>
+            <div><dt>Display</dt><dd>${l.displaySize}" ${RES[l.displayRes].label} ${esc(l.panel)}, ${l.hz}Hz</dd></div>
+            <div><dt>Cooling</dt><dd>${l.cooling}/5${l.coolingNote ? ' · ' + esc(l.coolingNote) : ''}</dd></div>
+            <div><dt>Weight</dt><dd>${l.weight ? l.weight + ' kg' : '—'}</dd></div>
+            <div><dt>Store</dt><dd>${esc(storeName(l))}${l.url ? ` · <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">product page</a>` : ''}</dd></div>
+          </dl>
+          <button class="btn btn-ghost btn-sm" data-action="edit" data-id="${esc(l.id)}">${I('edit')}Correct specs</button>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>How well it fits</h2><button class="linkbtn small" data-action="how-scores">How scores work</button></div>
+          <div class="fit-list">${PROFILE_KEYS.map(k => { const s = scoreFor(l, k); return `<details class="fit"><summary><span>${esc(PROFILES[k].label)}</span><span class="bar"><span class="sc-${grade(s.total)}" style="width:${s.total}%"></span></span><strong>${s.total}</strong></summary>${breakdownBars(s)}${s.notes.length ? `<ul class="score-notes">${s.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}</details>`; }).join('')}</div>
+          <p class="muted small">Estimates from the specs, out of 100. Tap a row to see why.</p>
+        </section>
+      </div>
+
+      <details class="panel collapsible"><summary><h2>All recorded prices (${l.history.length})</h2></summary>${obsTable(l)}</details>`;
+    drawChart($('#lp-chart'), l.history, { h: 260 });
+    $('#target').addEventListener('change', e => { const t = num(e.target.value); l.target = t > 0 ? t : null; touch(l); save(); toast(l.target ? `You'll be alerted at ${money(l.target)}` : 'Target removed'); });
+    document.title = `${l.name} · RTX Deal Hunter`;
+  }
+
+  /* ---------- Watchlist ---------- */
+  function renderWatchlist() {
+    const ls = visible().filter(l => l.watch);
+    view().innerHTML = pageHead('Watchlist', 'Laptops you\'re following. Set a target price on each one; it turns green when a recorded price reaches it.') +
+      (ls.length ? `<div class="wl">${ls.sort((a, b) => (curPrice(a) ?? 1e9) - (curPrice(b) ?? 1e9)).map(l => {
+        const st = priceStats(l), v = priceVerdict(l), link = retailerLink(l);
+        const hit = l.target && st && st.cur <= l.target;
+        return `<article class="wl-row ${hit ? 'hit' : ''}">
+          <div class="wl-main"><a href="#/laptop/${encodeURIComponent(l.id)}" class="wl-name">${esc(l.name)}</a><div class="muted small">${GPUS[l.gpu].label} · ${esc(storeName(l))} · ${st ? 'updated ' + ago(st.lastT) : 'no price yet'}</div>
+            <div class="wl-verdict v-${v.tone}">${esc(v.title)}</div></div>
+          ${sparkline(l.history)}
+          <div class="wl-price"><strong>${st ? money(st.cur) : '—'}</strong>${st && st.dPrev ? deltaChip(st.dPrev, st.dPrevPct) : ''}</div>
+          <label class="wl-target"><span class="muted small">Target</span><input type="number" min="0" step="10" inputmode="numeric" data-target-id="${esc(l.id)}" value="${l.target ?? ''}" placeholder="$"><span class="small ${hit ? 'ok' : 'muted'}">${l.target && st ? (hit ? 'Reached' : money(st.cur - l.target) + ' to go') : ''}</span></label>
+          <div class="wl-actions">${link ? `<a class="btn btn-sm" href="${esc(link.href)}" target="_blank" rel="noopener noreferrer">Check price${I('external')}</a>` : ''}<button class="star on" data-action="watch" data-id="${esc(l.id)}" title="Remove">${I('star')}</button></div>
+        </article>`;
+      }).join('')}</div>
+      <p class="muted small mt">Tip: open these store pages once a day during Black Friday week. With the extension installed, each visit records the latest price.</p>`
+        : emptyState('Nothing on your watchlist', 'Tap the star on any laptop to follow it here.', '<a class="btn btn-primary" href="#/laptops">Browse laptops</a>'));
+    $$('[data-target-id]').forEach(inp => inp.addEventListener('change', () => {
+      const l = getL(inp.dataset.targetId); const v = num(inp.value); l.target = v > 0 ? v : null; touch(l); save(); renderWatchlist();
+    }));
+  }
+
+  /* ---------- Guide ---------- */
+  function renderGuide() {
+    view().innerHTML = pageHead('How it works', 'Everything you need to know, in five minutes.', '<button class="btn btn-sm" data-action="tour">Replay the tour</button>') + `
+      <section class="guide-steps">
+        <div class="gstep"><span>1</span><h3>Install the extension</h3><p>Load the <code>extension</code> folder in Chrome or Edge (chrome://extensions → Developer mode → Load unpacked) and connect it to GitHub in its Settings. Full steps are in the README.</p></div>
+        <div class="gstep"><span>2</span><h3>Browse like normal</h3><p>Open RTX 50-series laptop pages on Amazon, Best Buy, B&amp;H, Newegg, Walmart, Dell, HP, Lenovo and more. Each visit saves the price, and a small badge shows how it changed.</p></div>
+        <div class="gstep"><span>3</span><h3>Let the site do the math</h3><p>Prices appear here a few minutes later, with history charts, a verdict on each price, scores and the Black Friday report.</p></div>
+      </section>
+
+      <section class="panel">
+        <h2>Where prices come from</h2>
+        <div class="table-wrap flat"><table>
+          <thead><tr><th>Label</th><th>Source</th><th>How often</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-seen">Seen in browser</span></td><td>The extension reads the price on a store page you opened.</td><td>Every visit</td></tr>
+            <tr><td><span class="badge badge-auto">Auto-checked</span></td><td>A scheduled GitHub job checks stores that allow it (and Best Buy, if you have an API key).</td><td>Every 3 hours</td></tr>
+            <tr><td><span class="badge badge-archive">Archived price</span></td><td>Older prices read from saved copies of store pages on web.archive.org.</td><td>Once per laptop</td></tr>
+            <tr><td><span class="badge badge-ok">Verified</span> / <span class="badge badge-warn">Unverified</span></td><td>Prices you typed in with "Log a price".</td><td>When you add them</td></tr>
+          </tbody></table></div>
+      </section>
+
+      <section class="panel">
+        <h2>Reading the numbers</h2>
+        <dl class="defs">
+          <div><dt>Price verdict</dt><dd><b>Lowest price recorded</b> or <b>Good price</b> (within 3% of the lowest) means buy with confidence. <b>Fair price</b> is within 10%. <b>Wait if you can</b> means it has been noticeably cheaper before.</dd></div>
+          <div><dt>Score out of 100</dt><dd>How well the specs fit a use: AAA gaming, SOC labs, local AI, VMs, multitasking or everyday work. GPU tier, VRAM, RAM, cooling and upgradeability carry the most weight. <button class="linkbtn" data-action="how-scores">See the formula</button></dd></div>
+          <div><dt>Price trend</dt><dd>On the Overview: the average change of every laptop's price compared with the first price recorded for it. Negative means prices are falling.</dd></div>
+          <div><dt>Black Friday verdicts</dt><dd>Compare each laptop's sale price with its price 20 days before Black Friday. "Raised, then discounted" flags stores that raised a price before cutting it.</dd></div>
+        </dl>
+      </section>
+
+      <section class="panel">
+        <h2>Questions</h2>
+        <div class="faq">
+          <details><summary>Why can't Amazon and Best Buy be checked automatically?</summary><p>Both stores block automated checks from servers, and their official data feeds need a business email (Best Buy) or an affiliate account with regular sales (Amazon). The extension records the prices you see while browsing instead, which needs no special access.</p></details>
+          <details><summary>Where is my data stored?</summary><p>On this site, in your browser. The extension and the automatic checks also save prices to <code>manual.json</code> and <code>feed.json</code> in your GitHub repository, so every device shows the same history. Nothing goes to any other server.</p></details>
+          <details><summary>Why does a laptop say "Not enough history"?</summary><p>A verdict needs at least two recorded prices. Open the laptop's store page again on another day, and the history fills in.</p></details>
+          <details><summary>The specs on a laptop look wrong.</summary><p>Specs added automatically come from the product title, so details like TGP, cooling and RAM upgradeability can be missing. Open the laptop and click "Correct specs"; scores update right away.</p></details>
+          <details><summary>How do I see older Amazon prices?</summary><p>Amazon laptops have camelcamelcamel and Keepa links on their page, both of which keep long price histories.</p></details>
+        </div>
+      </section>`;
+  }
+
+  /* ---------- Settings ---------- */
+  function renderSettings() {
+    const s = state.settings;
+    const sampleCount = state.laptops.filter(l => l.demo).length;
+    const f = feedState();
+    view().innerHTML = pageHead('Settings', '') + `
+      <div class="settings">
+        <section class="panel">
+          <h2>Price sources</h2>
+          ${sourcesSummary(visible())}
+          <p class="auto-status auto-${f.tone}"><strong>${esc(f.title)}.</strong> ${esc(f.body)}</p>
+          ${state.feedMeta && state.feedMeta.sources && state.feedMeta.sources.length ? `<details class="small"><summary>Automatic check details</summary><ul class="source-list">${state.feedMeta.sources.map(x => `<li><span class="src-dot src-${esc(x.status)}"></span><span>${esc(x.name)}</span><span class="muted">${esc(x.detail || x.status)}</span></li>`).join('')}</ul></details>` : ''}
+          <div class="row-actions mt"><button class="btn btn-sm btn-primary" data-action="refresh">${I('refresh')}Reload prices now</button><button class="btn btn-sm" data-action="export-tracked">${I('download')}Download tracked.json</button></div>
+          <details class="small mt"><summary>Advanced: feed address</summary>
+            <form class="inline-form" id="feed-form"><input type="text" id="feed-url" value="${esc(s.feedUrl)}" placeholder="feed.json" spellcheck="false"><button class="btn btn-sm" type="submit">Save</button></form>
+            <label class="switch"><input type="checkbox" id="auto-feed" ${s.autoFeed ? 'checked' : ''}><span>Load automatic prices when the site opens</span></label>
+          </details>
+        </section>
+
+        <section class="panel">
+          <h2>Your data</h2>
+          <p class="muted small">Watchlist, targets, edits and prices you log are kept in this browser. Export a backup before clearing browser data or switching devices.</p>
+          <div class="row-actions"><button class="btn btn-sm" data-action="export-json">${I('download')}Backup (JSON)</button><button class="btn btn-sm" data-action="export-csv">${I('download')}Prices (CSV)</button><button class="btn btn-sm" data-action="import-file">${I('upload')}Import…</button></div>
+          <div class="seg seg-sm mt">${[['merge', 'Import adds to my data'], ['replace', 'Import replaces my data']].map(([m, t]) => `<button class="seg-btn ${s.importMode === m ? 'on' : ''}" data-action="import-mode" data-mode="${m}">${t}</button>`).join('')}</div>
+          <h3 class="sub">Sample data</h3>
+          <p class="muted small">${sampleCount ? `${sampleCount} sample laptops with made-up prices are loaded${s.showDemo ? ' and visible' : ' but hidden'}.` : 'Load sample laptops with made-up prices to explore the site.'}</p>
+          <div class="row-actions">${sampleCount ? `<label class="switch"><input type="checkbox" id="show-demo" ${s.showDemo ? 'checked' : ''}><span>Show sample data</span></label><button class="btn btn-sm btn-ghost danger" data-action="clear-demo">Remove samples</button>` : '<button class="btn btn-sm" data-action="load-demo">Load sample data</button>'}</div>
+          <h3 class="sub">Start over</h3>
+          <button class="btn btn-sm btn-ghost danger" data-action="reset-all">${I('trash')}Erase everything in this browser</button>
+        </section>
+
+        <section class="panel">
+          <h2>Preferences</h2>
+          <h3 class="sub">Theme</h3>
+          <div class="seg">${['dark', 'light'].map(t => `<button class="seg-btn ${s.theme === t ? 'on' : ''}" data-action="set-theme" data-theme="${t}">${I(t === 'dark' ? 'moon' : 'sun')}${t === 'dark' ? 'Dark' : 'Light'}</button>`).join('')}</div>
+          <h3 class="sub">Score laptops for</h3>
+          <div class="radio-list">${PROFILE_KEYS.map(k => `<label class="radio"><input type="radio" name="profile" value="${k}" ${s.profile === k ? 'checked' : ''}><span>${esc(PROFILES[k].label)}</span></label>`).join('')}</div>
+          <button class="linkbtn small" data-action="how-scores">How scores work</button>
+        </section>
+
+        <section class="panel">
+          <h2>Stores</h2>
+          <ul class="store-list">${RETAILERS.filter(r => r.id !== 'other').map(r => `<li><div><strong>${esc(r.name)}</strong><div class="muted small">${esc(r.note)}</div></div><a class="btn btn-sm btn-ghost" href="${esc(r.search('RTX 50 gaming laptop'))}" target="_blank" rel="noopener noreferrer">Shop${I('external')}</a></li>`).join('')}</ul>
+        </section>
+      </div>`;
+    const sd = $('#show-demo'); if (sd) sd.addEventListener('change', e => { s.showDemo = e.target.checked; save(); renderSettings(); });
+    $('#auto-feed').addEventListener('change', e => { s.autoFeed = e.target.checked; save(); if (s.autoFeed) refreshFeed(true); });
+    $$('input[name=profile]').forEach(r => r.addEventListener('change', () => { s.profile = r.value; save(); toast('Scores now shown for ' + PROFILES[r.value].label.toLowerCase()); }));
+    $('#feed-form').addEventListener('submit', e => { e.preventDefault(); s.feedUrl = $('#feed-url').value.trim() || 'feed.json'; save(); toast('Saved'); });
+  }
+
+  /* ---------- Welcome tour ---------- */
+  const TOUR = [
+    { icon: 'chart', title: 'Welcome to RTX Deal Hunter', body: 'It keeps a price history for every RTX 50-series laptop you\'re considering, so you can tell a real deal from a fake one, especially around Black Friday.' },
+    { icon: 'external', title: 'Prices come from your browsing', body: 'The browser extension records the price whenever you open a laptop on Amazon, Best Buy, B&H and other stores. Automatic checks and web archives fill in the rest.' },
+    { icon: 'check', title: 'Every laptop gets a verdict', body: 'Open a laptop to see its price chart and a plain answer: "Lowest price recorded", "Good price", "Fair price" or "Wait if you can". Set a target to get an alert.' },
+    { icon: 'bolt', title: 'Then check the Black Friday report', body: 'It compares sale prices with prices 20 days earlier and flags stores that raised prices before "discounting" them.' }
+  ];
+  function openTour(i = 0) {
+    const t = TOUR[i];
+    openModal(`<div class="tour">
+      <div class="tour-ico">${I(t.icon)}</div>
+      <h2>${esc(t.title)}</h2><p>${esc(t.body)}</p>
+      <div class="tour-dots">${TOUR.map((_, j) => `<span class="${j === i ? 'on' : ''}"></span>`).join('')}</div>
+      <div class="modal-actions">${i ? `<button class="btn btn-ghost" id="tour-back">Back</button>` : `<button class="btn btn-ghost" id="tour-skip">Skip</button>`}<button class="btn btn-primary" id="tour-next">${i === TOUR.length - 1 ? 'Get started' : 'Next'}</button></div>
+    </div>`, { label: 'Welcome tour' });
+    const done = () => { state.settings.tourDone = true; save(); closeModal(); };
+    $('#tour-next').onclick = () => i === TOUR.length - 1 ? (done(), location.hash = state.laptops.length ? '#/overview' : '#/guide') : openTour(i + 1);
+    const b = $('#tour-back'); if (b) b.onclick = () => openTour(i - 1);
+    const sk = $('#tour-skip'); if (sk) sk.onclick = done;
+  }
+
+  /* =========================================================
+   * 11. Chrome, routing, actions
    * ======================================================= */
   function touch(l) { l._v = (l._v || 0) + 1; }
   function toggleCompare(id, force) {
@@ -1589,7 +1630,7 @@
     if (i >= 0 && force !== true) { state.compare.splice(i, 1); toast('Removed from compare'); }
     else if (i < 0) {
       if (state.compare.length >= 4) { toast('Compare holds up to 4 laptops. Remove one first.', 'error'); return; }
-      state.compare.push(id); toast('Added to compare');
+      state.compare.push(id); toast(state.compare.length > 1 ? 'Added to compare' : 'Added. Pick one more laptop to compare.');
     }
     save(); rerender();
   }
@@ -1599,16 +1640,18 @@
     el.textContent = msg;
     $('#toasts').appendChild(el);
     requestAnimationFrame(() => el.classList.add('in'));
-    setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 300); }, tone === 'error' ? 6000 : 3200);
+    setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 300); }, tone === 'error' ? 6000 : 3000);
   }
   function applyTheme() {
     document.documentElement.dataset.theme = state.settings.theme;
-    $('meta[name=theme-color]').setAttribute('content', state.settings.theme === 'light' ? '#f6f7f9' : '#0b0d11');
+    $('meta[name=theme-color]').setAttribute('content', state.settings.theme === 'light' ? '#ffffff' : '#0a0b0d');
     $('#theme-btn').innerHTML = I(state.settings.theme === 'light' ? 'moon' : 'sun');
   }
   function renderNav() {
-    $('#nav').innerHTML = NAV.map(n => n.group ? `<div class="nav-group">${esc(n.group)}</div>` :
-      `<a href="#/${n.id}" class="nav-item ${currentView === n.id ? 'active' : ''}" ${currentView === n.id ? 'aria-current="page"' : ''}>${I(n.icon)}<span>${esc(n.label)}</span>${n.id === 'watchlist' ? `<span class="nav-n">${visible().filter(l => l.watch).length || ''}</span>` : ''}${n.id === 'compare' ? `<span class="nav-n">${state.compare.length || ''}</span>` : ''}</a>`).join('');
+    const counts = { watchlist: visible().filter(l => l.watch).length, compare: state.compare.length };
+    const item = n => `<a href="#/${n.id}" class="${currentView === n.id ? 'active' : ''}" ${currentView === n.id ? 'aria-current="page"' : ''}>${I(n.icon)}<span>${esc(n.label)}</span>${counts[n.id] ? `<em>${counts[n.id]}</em>` : ''}</a>`;
+    $('#nav').innerHTML = NAV.map(item).join('');
+    $('#tabbar').innerHTML = NAV.map(item).join('');
   }
   function renderTray() {
     const tray = $('#compare-tray');
@@ -1616,50 +1659,42 @@
     state.compare = ls.map(l => l.id);
     if (!ls.length || currentView === 'compare') { tray.hidden = true; return; }
     tray.hidden = false;
-    tray.innerHTML = `<div class="tray-items">${ls.map(l => `<span class="tray-item">${esc(l.name.length > 26 ? l.name.slice(0, 25) + '…' : l.name)}<button data-action="compare-toggle" data-id="${esc(l.id)}" aria-label="Remove ${esc(l.name)}">${I('x')}</button></span>`).join('')}</div><a class="btn btn-primary btn-sm" href="#/compare">Compare ${ls.length}</a>`;
+    tray.innerHTML = `<div class="tray-items">${ls.map(l => `<span class="tray-item">${esc(l.name.length > 24 ? l.name.slice(0, 23) + '…' : l.name)}<button data-action="compare-toggle" data-id="${esc(l.id)}" aria-label="Remove">${I('x')}</button></span>`).join('')}</div><a class="btn btn-primary btn-sm" href="#/compare">Compare ${ls.length}</a>`;
   }
   function updateChrome() {
-    const pill = $('#demo-pill'), m = state.feedMeta;
-    if (state.settings.autoFeed && m && m.generated && !m.error) { pill.hidden = false; pill.className = 'pill pill-auto'; pill.textContent = 'Auto-checked ' + ago(m.generated); pill.title = 'Last automatic price check: ' + fmtDate(m.generated); }
-    else if (state.settings.showDemo && state.laptops.some(l => l.demo)) { pill.hidden = false; pill.className = 'pill pill-demo'; pill.textContent = 'Demo data on'; pill.title = ''; }
-    else pill.hidden = true;
+    const pill = $('#status-pill'), m = state.feedMeta;
+    const lastT = visible().map(lastCheck).filter(Boolean).sort().pop();
+    pill.innerHTML = `<i class="live ${lastT && Date.now() - new Date(lastT) < 6 * 3600e3 ? 'on' : ''}"></i>${lastT ? 'Updated ' + ago(lastT) : 'No prices yet'}`;
+    pill.title = (m && m.generated ? 'Automatic check: ' + fmtDate(m.generated) + '\n' : '') + (state.extMeta && state.extMeta.generated ? 'Extension sync: ' + fmtDate(state.extMeta.generated) + '\n' : '') + 'Click to reload prices';
     renderNav(); renderTray();
   }
   function rerender() {
-    if (ui.rerunResults && LIST_VIEWS[currentView] && $('#results')) {
-      ui.rerunResults();
-      if (LIST_VIEWS[currentView].gpuChips) { /* chip counts unaffected by most actions */ }
-    } else {
-      const y = window.scrollY;
-      renderView();
-      window.scrollTo(0, y);
-    }
+    if (currentView === 'laptops' && ui.rerunResults && $('#results')) ui.rerunResults();
+    else { const y = window.scrollY; renderView(); window.scrollTo(0, y); }
     updateChrome();
-    if (!$('#modal-root').hidden) {
-      const d = $('#modal-root .detail-head');
-      if (d && ui.detailId && getL(ui.detailId)) openDetail(ui.detailId);
-      else if (d) closeModal();
-    }
   }
   function renderView() {
-    ui.rerunResults = null;
-    ui.charts = [];
-    if (LIST_VIEWS[currentView]) return renderListView(currentView);
-    ({ dashboard: renderDashboard, bfreport: renderBfReport, compare: renderCompare, history: renderHistory, watchlist: renderWatchlist, retailers: renderRetailers, settings: renderSettings }[currentView] || renderDashboard)();
+    ui.rerunResults = null; ui.charts = [];
+    ({ overview: renderOverview, laptops: renderLaptops, laptop: () => renderLaptop(routeParam), compare: renderCompare, 'black-friday': renderBfReport, watchlist: renderWatchlist, settings: renderSettings, guide: renderGuide }[currentView] || renderOverview)();
   }
   function route() {
-    const key = (location.hash.replace(/^#\/?/, '').split('?')[0]) || 'dashboard';
-    const valid = NAV.some(n => n.id === key);
-    const changed = currentView !== key;
-    currentView = valid ? key : 'dashboard';
-    if (changed) ui.filters.sort = '';
-    document.body.classList.remove('nav-open');
-    ui.detailId = null;
+    const raw = location.hash.replace(/^#\/?/, '');
+    let [key, param] = raw.split('?')[0].split('/');
+    key = ALIASES[key] || key || 'overview';
+    const legacy = raw.split('?')[0];
+    const changed = currentView !== key || routeParam !== decodeURIComponent(param || '');
+    currentView = ['overview', 'laptops', 'laptop', 'compare', 'black-friday', 'watchlist', 'settings', 'guide'].includes(key) ? key : 'overview';
+    routeParam = decodeURIComponent(param || '');
+    if (currentView === 'laptops') {
+      ui.f = parseQuery();
+      const legacyMap = { under1000: { budget: 1000 }, under1500: { budget: 1500 }, under2000: { budget: 2000 }, gaming: { use: 'gaming' }, labs: { use: 'labs' }, deals: { sort: 'drop' } };
+      Object.assign(ui.f, legacyMap[legacy] || {});
+    }
     closeModal();
     renderView();
     updateChrome();
     const nav = NAV.find(n => n.id === currentView);
-    document.title = `${nav ? nav.label : 'Dashboard'} · RTX Deal Hunter`;
+    if (currentView !== 'laptop') document.title = `${nav ? nav.label : currentView === 'guide' ? 'How it works' : currentView === 'settings' ? 'Settings' : 'Overview'} · RTX Deal Hunter`;
     if (changed) { window.scrollTo(0, 0); view().focus({ preventScroll: true }); }
   }
 
@@ -1668,65 +1703,66 @@
     if (!a) return;
     const id = a.dataset.id;
     switch (a.dataset.action) {
-      case 'detail': ui.detailId = id; openDetail(id); break;
-      case 'watch': { const l = getL(id); l.watch = !l.watch; touch(l); save(); toast(l.watch ? 'Added to watchlist' : 'Removed from watchlist'); rerender(); break; }
-      case 'compare-toggle': toggleCompare(id); break;
+      case 'detail': location.hash = '#/laptop/' + encodeURIComponent(id); break;
+      case 'watch': { e.preventDefault(); const l = getL(id); l.watch = !l.watch; touch(l); save(); toast(l.watch ? 'Added to watchlist' : 'Removed from watchlist'); rerender(); break; }
+      case 'compare-toggle': e.preventDefault(); toggleCompare(id); break;
       case 'compare-clear': state.compare = []; save(); rerender(); break;
-      case 'log-price': ui.detailId = null; openLogPrice(id); break;
-      case 'check': ui.detailId = null; setTimeout(() => openLogPrice(id), 50); break;  // link opens retailer in new tab
-      case 'edit': ui.detailId = null; openLaptopForm(id); break;
+      case 'log-price': openLogPrice(id); break;
+      case 'check': setTimeout(() => openLogPrice(id), 50); break;
+      case 'edit': openLaptopForm(id); break;
       case 'add-laptop': openLaptopForm(null); break;
       case 'delete': {
         const l = getL(id);
-        confirmModal('Delete this laptop?', `"${l.name}" and its ${l.history.length} price observations will be removed from this browser.`, 'Delete', () => {
+        confirmModal('Delete this laptop?', `"${l.name}" and its ${l.history.length} recorded prices will be removed from this browser.`, 'Delete', () => {
           state.laptops = state.laptops.filter(x => x.id !== id);
           state.compare = state.compare.filter(x => x !== id);
-          ui.detailId = null; save(); rerender(); toast('Laptop deleted');
+          save(); toast('Laptop deleted'); location.hash = '#/laptops';
         });
         break;
       }
       case 'del-obs': {
         const l = getL(id), i = Number(a.dataset.i), o = l.history[i];
-        const reopen = ui.detailId;
-        confirmModal('Delete this price?', `${money(o.price)} recorded ${fmtDate(o.t)}.`, 'Delete', () => {
-          l.history.splice(i, 1); touch(l); save(); rerender();
-          if (reopen) { ui.detailId = reopen; openDetail(reopen); }
-          toast('Observation deleted');
-        });
+        confirmModal('Delete this price?', `${money(o.price)} recorded ${fmtDate(o.t)}.`, 'Delete', () => { l.history.splice(i, 1); touch(l); save(); rerender(); toast('Price deleted'); });
         break;
       }
-      case 'close-modal': if (a.tagName !== 'A') e.preventDefault(); ui.detailId = null; closeModal(); break;
+      case 'close-modal': if (a.tagName !== 'A') e.preventDefault(); closeModal(); break;
       case 'refresh': refreshFeed(false); break;
       case 'theme': state.settings.theme = state.settings.theme === 'light' ? 'dark' : 'light'; save(); applyTheme(); if (currentView === 'settings') renderSettings(); break;
       case 'set-theme': state.settings.theme = a.dataset.theme; save(); applyTheme(); renderSettings(); break;
-      case 'nav-toggle': document.body.classList.toggle('nav-open'); break;
-      case 'nav-close': document.body.classList.remove('nav-open'); break;
-      case 'set-gpu': ui.filters.gpu = a.dataset.gpu; if (currentView === 'gpus') { e.preventDefault(); renderView(); } break;
-      case 'ai-tab': ui.aiTab = a.dataset.tab; renderView(); break;
-      case 'reset-filters': ui.filters = { q: '', gpu: 'all', brand: 'all', retailer: 'all', ram: 0, min: '', max: '', status: 'all', sort: '' }; $('#global-search').value = ''; renderView(); break;
+      case 'f': {
+        const k = a.dataset.k; let v = a.dataset.v;
+        ui.f[k] = k === 'budget' ? +v : k === 'ram32' ? v === 'true' : v;
+        const q = new URLSearchParams();
+        for (const [kk, vv] of Object.entries(ui.f)) if (kk !== 'q' && vv && vv !== 'all' && !(kk === 'sort' && vv === 'score')) q.set(kk, vv);
+        history.replaceState(null, '', '#/laptops' + (q.toString() ? '?' + q : ''));
+        const y = scrollY; renderLaptops(); scrollTo(0, y); break;
+      }
+      case 'f-reset': ui.f = { ...DEFAULT_F }; history.replaceState(null, '', '#/laptops'); renderLaptops(); break;
+      case 'hide-checklist': state.settings.hideChecklist = true; save(); renderOverview(); break;
+      case 'tour': openTour(0); break;
       case 'how-scores': openHowScores(); break;
       case 'export-json': exportJSON(); break;
       case 'export-csv': exportCSV(); break;
       case 'export-tracked': exportTracked(); break;
       case 'import-file': $('#import-input').click(); break;
       case 'import-mode': state.settings.importMode = a.dataset.mode; save(); renderSettings(); break;
-      case 'clear-demo': confirmModal('Remove demo data?', 'All laptops marked demo, and their made-up prices, will be deleted. Your own laptops stay.', 'Remove demo data', () => {
+      case 'clear-demo': confirmModal('Remove sample data?', 'All sample laptops and their made-up prices will be deleted. Your own laptops stay.', 'Remove', () => {
         const ids = new Set(state.laptops.filter(l => l.demo).map(l => l.id));
         state.laptops = state.laptops.filter(l => !l.demo); state.compare = state.compare.filter(x => !ids.has(x));
-        save(); rerender(); toast('Demo data removed');
+        save(); rerender(); toast('Sample data removed');
       }); break;
-      case 'load-demo': mergeAll(buildDemo()); state.settings.showDemo = true; save(); rerender(); toast('Demo data loaded'); break;
-      case 'reset-all': confirmModal('Erase everything?', 'This deletes every laptop, price and setting stored by RTX Deal Hunter in this browser. It cannot be undone.', 'Erase all', () => {
+      case 'load-demo': mergeAll(buildDemo()); state.settings.showDemo = true; save(); rerender(); toast('Sample data loaded. Prices are made up.'); break;
+      case 'reset-all': confirmModal('Erase everything?', 'This deletes every laptop, price and setting stored in this browser. Prices saved in your GitHub repository load again on the next refresh.', 'Erase all', () => {
         try { localStorage.removeItem(STORE_KEY); } catch { }
-        state = { laptops: [], settings: { ...DEFAULT_SETTINGS, showDemo: false }, compare: [], seededAt: new Date().toISOString() };
+        state = { laptops: [], settings: { ...DEFAULT_SETTINGS, tourDone: true }, compare: [], seededAt: new Date().toISOString() };
         save(); applyTheme(); rerender(); toast('All data erased');
       }); break;
     }
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { if (!$('#modal-root').hidden) { ui.detailId = null; closeModal(); } else document.body.classList.remove('nav-open'); }
+    if (e.key === 'Escape' && !$('#modal-root').hidden) closeModal();
     if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && $('#modal-root').hidden) { e.preventDefault(); $('#global-search').focus(); }
-    if (e.key === 'Tab' && !$('#modal-root').hidden) {   // keep focus inside the dialog
+    if (e.key === 'Tab' && !$('#modal-root').hidden) {
       const f = $$('#modal-root .modal a[href], #modal-root .modal button:not([disabled]), #modal-root .modal input:not([disabled]), #modal-root .modal select, #modal-root .modal textarea').filter(x => x.offsetParent !== null);
       if (!f.length) return;
       if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
@@ -1735,25 +1771,19 @@
   });
   $('#import-input').addEventListener('change', e => { const f = e.target.files[0]; if (f) importFile(f); e.target.value = ''; });
   const gs = $('#global-search');
-  gs.addEventListener('input', debounce(() => {
-    ui.filters.q = gs.value;
-    if (LIST_VIEWS[currentView] && $('#f-q')) { $('#f-q').value = gs.value; ui.rerunResults(); }
-  }, 150));
   gs.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { ui.filters.q = gs.value; if (!LIST_VIEWS[currentView]) location.hash = '#/deals'; else ui.rerunResults(); }
+    if (e.key === 'Enter') { ui.f = { ...DEFAULT_F, q: gs.value }; if (currentView === 'laptops') renderLaptops(); else location.hash = '#/laptops'; gs.blur(); }
   });
   window.addEventListener('hashchange', route);
-  window.addEventListener('storage', e => { if (e.key === STORE_KEY) { load(); applyTheme(); rerender(); } }); // sync between tabs
-  setInterval(() => { if (currentView === 'dashboard' && $('#modal-root').hidden && !document.hidden) { const y = scrollY; renderDashboard(); scrollTo(0, y); } }, 60e3);
+  window.addEventListener('resize', debounce(() => ui.charts.filter(c => document.body.contains(c.el)).forEach(c => c.redraw ? c.redraw() : drawChart(c.el, c.obs, c.opts)), 200));
+  window.addEventListener('storage', e => { if (e.key === STORE_KEY) { load(); applyTheme(); rerender(); } });
+  setInterval(() => { if ($('#modal-root').hidden && !document.hidden) updateChrome(); }, 60e3);
 
   /* ---------- boot ---------- */
   load();
-  $('.nav-toggle').innerHTML = I('menu');
-  $('.top-search-icon').innerHTML = I('search');
-  $('#refresh-btn').innerHTML = I('refresh') + '<span class="hide-sm">Refresh</span>';
-  $('#add-btn').innerHTML = I('plus') + '<span class="hide-sm">Add laptop</span>';
   applyTheme();
   route();
+  if (!state.settings.tourDone) setTimeout(() => openTour(0), 400);
   if (state.settings.autoFeed) refreshFeed(true);
   setInterval(() => { if (state.settings.autoFeed && !document.hidden) refreshFeed(true); }, 15 * 60e3);
   document.addEventListener('visibilitychange', () => {
