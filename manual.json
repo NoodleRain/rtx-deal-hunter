@@ -1,8 +1,69 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-17T22:37:43.148Z",
+ "generated": "2026-11-17T22:42:20.079Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
- "items": []
+ "items": [
+  {
+   "addedAt": "2026-11-17T22:41:19.443Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-17T22:41:19.444Z",
+   "cpu": "Intel Core 5 Processor",
+   "displayRes": "FHD",
+   "displaySize": 16,
+   "fullName": "Acer Nitro V Gaming Laptop | Intel Core 5 Processor 210H | NVIDIA GeForce RTX 5050 Laptop GPU | 16\" WUXGA IPS 165Hz Display | 8GB DDR5 | 512GB Gen 4 SSD | Wi-Fi 6 | Backlit Keyboard | ANV16-I31-54PT",
+   "gpu": "RTX 5050",
+   "history": [
+    {
+     "note": "Seller: Amazon.com \n                                                ",
+     "price": 1099.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-17T22:41:19.444Z"
+    }
+   ],
+   "hz": 165,
+   "id": "amz-B0CJCNL315",
+   "lastSeenAt": "2026-11-17T22:41:19.444Z",
+   "listPrice": 1349.99,
+   "name": "Acer Nitro V (RTX 5050, 512GB)",
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 512,
+   "url": "https://www.amazon.com/dp/B0CJCNL315",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-17T22:40:24.564Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-17T22:40:45.656Z",
+   "displayRes": "FHD",
+   "displaySize": 16,
+   "fullName": "ASUS ROG Strix G16 (2025) Gaming Laptop, 16” FHD+ 16:10 165Hz/3ms, NVIDIA® GeForce RTX™ 5060, Intel® Core™ i7 Processor 14650HX, 16GB DDR5, 1TB Gen 4 SSD, Wi-Fi 7, Windows 11 Home, G615JMR-AS74",
+   "gpu": "RTX 5060",
+   "history": [
+    {
+     "note": "Seller: Amazon.com \n                                                ",
+     "price": 277.74,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-17T22:40:24.564Z"
+    }
+   ],
+   "hz": 165,
+   "id": "amz-B0DZZWMB2L",
+   "lastSeenAt": "2026-11-17T22:40:45.656Z",
+   "listPrice": 1666.43,
+   "name": "ASUS ROG Strix G16 (2025) (RTX 5060, 16GB, 1TB)",
+   "ram": 16,
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.amazon.com/dp/B0DZZWMB2L",
+   "vram": 8
+  }
+ ]
 }
