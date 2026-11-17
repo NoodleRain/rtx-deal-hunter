@@ -190,7 +190,13 @@ function priceFromHtml(html) {
       }
     }
   }
-  // 2) Open Graph / product meta tags
+  // 2) Store-specific markup (used mainly for archived copies of pages)
+  const amz = html.match(/id=["']corePrice(?:Display_desktop)?_feature_div["'][\s\S]{0,4000}?class=["']a-offscreen["']>\s*\$([\d,]+\.\d{2})/i)
+    || html.match(/id=["']priceblock_(?:our|deal)price["'][^>]*>\s*\$([\d,]+\.\d{2})/i);
+  if (amz && okPrice(toNum(amz[1]))) return { price: toNum(amz[1]), available: true, how: 'Amazon price block' };
+  const bb = html.match(/"customerPrice"\s*:\s*([\d.]+)/);
+  if (bb && okPrice(toNum(bb[1]))) return { price: toNum(bb[1]), available: true, how: 'Best Buy price data' };
+  // 3) Open Graph / product meta tags
   const meta = html.match(/<meta[^>]+(?:property|name|itemprop)=["'](?:product:price:amount|og:price:amount|price)["'][^>]*content=["']([\d.,]+)["']/i)
     || html.match(/<meta[^>]+content=["']([\d.,]+)["'][^>]*(?:property|name|itemprop)=["'](?:product:price:amount|og:price:amount|price)["']/i);
   if (meta && okPrice(toNum(meta[1]))) return { price: toNum(meta[1]), available: true, how: 'meta tag' };
@@ -231,6 +237,76 @@ async function checkPages(items, sources) {
   return results;
 }
 
+/* ---------------- price history from the Wayback Machine ----------------
+ * The retailer blocks us today, but web.archive.org keeps public snapshots of
+ * many product pages. We read the price the page showed on each snapshot date.
+ * Only archive.org is contacted, slowly, and each item is backfilled once
+ * (retried after a few days if nothing was archived yet).
+ */
+const WB = process.env.WAYBACK_BASE || 'https://web.archive.org';
+const WAYBACK_DAYS = +(process.env.WAYBACK_DAYS || 45);
+const ymd = d => d.toISOString().slice(0, 10).replace(/-/g, '');
+async function waybackSnapshots(url) {
+  const tryUrls = [url, url.split('?')[0]].filter((v, i, a) => a.indexOf(v) === i);
+  for (const u of tryUrls) {
+    const q = `${WB}/cdx/search/cdx?url=${encodeURIComponent(u.replace(/^https?:\/\//, ''))}`
+      + `&from=${ymd(new Date(Date.now() - WAYBACK_DAYS * 864e5))}&to=${ymd(new Date())}`
+      + `&output=json&filter=statuscode:200&collapse=timestamp:8&limit=60`;
+    try {
+      const r = await get(q, { timeout: 30000 });
+      if (!r.ok) continue;
+      const rows = await r.json();
+      const snaps = rows.slice(1).map(x => ({ ts: x[1], original: x[2] })).filter(x => /^\d{14}$/.test(x.ts));
+      if (snaps.length) return snaps;
+    } catch { /* try next form */ }
+    await sleep(1500);
+  }
+  return [];
+}
+function pickSpread(snaps, max) {   // keep up to `max` snapshots spread across the period
+  if (snaps.length <= max) return snaps;
+  const out = []; for (let i = 0; i < max; i++) out.push(snaps[Math.round(i * (snaps.length - 1) / (max - 1))]);
+  return [...new Map(out.map(s => [s.ts, s])).values()];
+}
+const tsToIso = ts => `${ts.slice(0, 4)}-${ts.slice(4, 6)}-${ts.slice(6, 8)}T${ts.slice(8, 10)}:${ts.slice(10, 12)}:${ts.slice(12, 14)}Z`;
+async function backfill(items, sources) {
+  const max = +(process.env.WAYBACK_MAX_ITEMS || 20);
+  const due = [...items.values()].filter(it => it.url && (!it.backfilledAt ||
+    (!it.backfillFound && Date.parse(now) - Date.parse(it.backfilledAt) > 3 * 864e5))).slice(0, max);
+  if (!due.length) return 0;
+  log(`Wayback Machine history (${due.length} items)…`);
+  let added = 0, withData = 0;
+  for (const it of due) {
+    let found = 0;
+    try {
+      const snaps = pickSpread(await waybackSnapshots(it.url), 8);
+      for (const sn of snaps) {
+        await sleep(2000);
+        try {
+          const r = await get(`${WB}/web/${sn.ts}id_/${sn.original}`, { timeout: 30000 });
+          if (!r.ok) continue;
+          const p = priceFromHtml((await r.text()).slice(0, 3_000_000));
+          if (!p) continue;
+          const t = tsToIso(sn.ts);
+          it.history ||= [];
+          if (!it.history.some(h => h.t.slice(0, 10) === t.slice(0, 10))) {
+            it.history.push({ t, price: p.price, status: 'archive', source: 'Wayback Machine snapshot' });
+            found++;
+          }
+        } catch { /* skip this snapshot */ }
+      }
+    } catch (e) { log('  wayback error', e.message); }
+    it.history.sort((a, b) => Date.parse(a.t) - Date.parse(b.t));
+    it.backfilledAt = now; it.backfillFound = (it.backfillFound || 0) + found;
+    if (found) withData++;
+    added += found;
+    log(`  ${found ? 'found ' + found : 'none   '} ${it.name || it.id}`);
+    await sleep(1500);
+  }
+  sources.push({ id: 'wayback', name: 'Wayback Machine (past prices)', status: withData ? 'ok' : 'partial', detail: `${added} past prices for ${withData}/${due.length} laptops checked this run` });
+  return added;
+}
+
 /* ---------------- merge into feed ---------------- */
 function addObservation(item, price, source) {
   item.history ||= [];
@@ -266,7 +342,12 @@ async function main() {
   }
 
   // Tracked product pages
-  const pages = (tracked.items || []).filter(i => i && typeof i.url === 'string' && /^https?:\/\//.test(i.url));
+  // Stores that keep refusing are checked once a day instead of every run.
+  const pages = (tracked.items || []).filter(i => i && typeof i.url === 'string' && /^https?:\/\//.test(i.url)).filter(i => {
+    const prev = items.get(i.id);
+    if (!prev || !['blocked', 'skipped'].includes(prev.checkStatus) || (prev.failCount || 0) < 3) return true;
+    return Date.parse(now) - Date.parse(prev.lastAttemptAt || prev.checkedAt || 0) > 24 * 3600e3;
+  });
   if (pages.length) {
     log(`Product pages (${pages.length})…`);
     const res = await checkPages(pages, sources);
@@ -276,10 +357,17 @@ async function main() {
       let it = items.get(id);
       if (!it) { const { id: _i, ...rest } = src; it = { id, ...rest, history: [] }; items.set(id, it); newItems++; }
       else { const { history, ...rest } = src; Object.assign(it, rest, { id }); }
-      it.checkedAt = now; it.checkStatus = r.status; it.checkDetail = r.detail;
+      it.checkedAt = now; it.lastAttemptAt = now; it.checkStatus = r.status; it.checkDetail = r.detail;
+      it.failCount = r.status === 'ok' ? 0 : (it.failCount || 0) + 1;
       if (r.status === 'ok') { it.available = r.available; if (addObservation(it, r.price, 'Auto: ' + r.host)) newPrices++; }
     }
   }
+
+  // Items listed in tracked.json that weren't checked this run (backed off) still appear in the feed.
+  for (const src of tracked.items || []) {
+    if (src && src.id && src.url && !items.has(src.id)) { items.set(src.id, { ...src, history: [] }); newItems++; }
+  }
+  if (process.env.WAYBACK !== 'off') newPrices += await backfill(items, sources);
 
   const out = {
     format: 'rtx-deal-hunter-feed', version: 2, generated: now,

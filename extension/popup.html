@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>RTX Deal Hunter</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <img src="icons/icon48.png" alt="" width="22" height="22">
+    <div class="title">RTX Deal Hunter</div>
+    <nav>
+      <button class="tab on" data-tab="list">Laptops</button>
+      <button class="tab" data-tab="settings">Settings</button>
+    </nav>
+  </header>
+
+  <section id="list" class="pane">
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Filter…" aria-label="Filter laptops">
+      <select id="sort" aria-label="Sort">
+        <option value="seen">Recently seen</option>
+        <option value="drop">Biggest drop</option>
+        <option value="price">Price: low to high</option>
+      </select>
+    </div>
+    <div id="items"></div>
+    <p class="hint" id="empty" hidden>Open an RTX 50-series laptop page on Amazon, Best Buy, B&amp;H, Newegg, Walmart, Dell, HP, Lenovo or another supported store. Its price is saved here automatically.</p>
+  </section>
+
+  <section id="settings" class="pane" hidden>
+    <h2>Recording</h2>
+    <label class="chk"><input type="checkbox" id="autoAdd"> Track every RTX 50-series laptop page I open</label>
+    <label class="chk"><input type="checkbox" id="notify"> Notify me about price drops and target prices</label>
+
+    <h2>Sync to my website</h2>
+    <p class="hint">Saves prices to <code>manual.json</code> in your repository so your RTX Deal Hunter site shows them on every device. See the README for creating the token.</p>
+    <label>GitHub username<input id="ghOwner" placeholder="NoodleRain" spellcheck="false"></label>
+    <label>Repository<input id="ghRepo" placeholder="rtx-deal-hunter" spellcheck="false"></label>
+    <label>Access token<input id="ghToken" type="password" placeholder="github_pat_…" spellcheck="false" autocomplete="off"></label>
+    <div class="row">
+      <button id="save" class="primary">Save</button>
+      <button id="syncNow">Sync now</button>
+    </div>
+    <p class="status" id="syncStatus"></p>
+
+    <h2>Data</h2>
+    <div class="row">
+      <button id="export">Export JSON</button>
+      <a id="site" target="_blank" rel="noopener">Open my site</a>
+    </div>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>

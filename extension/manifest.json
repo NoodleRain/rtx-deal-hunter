@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "RTX Deal Hunter Companion",
+  "version": "1.0.0",
+  "description": "Records RTX 50-series laptop prices from product pages you visit, tracks price history, alerts you to drops, and syncs to your RTX Deal Hunter site.",
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "action": { "default_popup": "popup.html", "default_title": "RTX Deal Hunter", "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png" } },
+  "background": { "service_worker": "background.js" },
+  "permissions": ["storage", "notifications", "alarms"],
+  "host_permissions": ["https://api.github.com/*"],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.amazon.com/*",
+        "*://*.bestbuy.com/*",
+        "*://*.newegg.com/*",
+        "*://*.bhphotovideo.com/*",
+        "*://*.walmart.com/*",
+        "*://*.dell.com/*",
+        "*://*.hp.com/*",
+        "*://*.lenovo.com/*",
+        "*://*.microcenter.com/*",
+        "*://*.costco.com/*",
+        "*://store.acer.com/*",
+        "*://*.asus.com/*",
+        "*://*.msi.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

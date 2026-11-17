@@ -26,10 +26,58 @@ No servers, no database, no paid APIs. The website is plain HTML, CSS and JavaSc
 3. It adds new prices to `feed.json` and commits the file to your repository. Unchanged prices are logged at most once a day.
 4. The website loads `feed.json` when it opens, again every 15 minutes while it stays open, and whenever you come back to the tab. New prices go into each laptop's history and chart, the watchlist highlights target prices that have been reached, and every card shows when it was last checked.
 
+### Past prices (before you started tracking)
+
+Once per laptop, the checker also looks up archived copies of the product page on the **Wayback Machine** (web.archive.org) from the last 45 days. It reads the price each copy showed and adds it to the history, labeled **Archived price**. The retailer itself is never contacted for this. How much it finds depends on how often archive.org saved that page: popular pages often have several copies, and new or obscure pages may have none. Laptops with nothing archived are retried every few days.
+
+### Amazon
+
+Amazon blocks automated page checks, and its official product API (Creators API) is only open to Amazon affiliates with an approved account and at least 10 qualifying sales in the last 30 days. So Amazon works like this:
+- Add the laptop with its Amazon link (`https://www.amazon.com/dp/…`) and log prices with **+**.
+- Its details page links to **camelcamelcamel** and **Keepa**, which keep years of Amazon price history for free on their sites.
+- The Wayback backfill still runs for Amazon links and recovers whatever archived copies show.
+
+### Browser extension (Amazon, Best Buy and every other store)
+
+Stores block GitHub's servers, but not you. The **RTX Deal Hunter Companion** extension in the `extension` folder records prices from product pages **you open yourself** in Chrome or Edge. It never visits pages on its own, never clicks anything, and only runs on the supported store sites.
+
+What it does:
+- Open any RTX 5050–5090 laptop page on **Amazon, Best Buy, B&H, Newegg, Walmart, Dell, HP, Lenovo, Micro Center, Costco, Acer, ASUS or MSI**, and it saves the price, list price, stock status, seller (Amazon) and time.
+- A small badge in the corner shows the price and how it changed since you last saw it. Pages that aren't tracked yet get a **Track** button.
+- Its toolbar popup lists every laptop with current price, change, lowest seen, a target price, and a link back to the store.
+- It sends a desktop notification when a price drops or reaches your target.
+- It syncs to `manual.json` in your repository, so the website (charts, history, Black Friday Report) shows these prices on every device. Prices from several computers are merged.
+
+**Install (Chrome or Edge):**
+1. Unzip the project on your computer. Keep the `extension` folder somewhere permanent, such as Documents.
+2. Open `chrome://extensions` (Edge: `edge://extensions`).
+3. Turn on **Developer mode** (top right in Chrome, left side in Edge).
+4. Click **Load unpacked** and choose the `extension` folder.
+5. Pin it: click the puzzle-piece icon in the toolbar, then the pin next to **RTX Deal Hunter Companion**.
+
+**Connect it to your site (optional, recommended):**
+1. On GitHub, go to your profile picture → **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
+2. Name it `rtx-deal-hunter extension`, set an expiration (for example 90 days), choose **Only select repositories**, and pick `rtx-deal-hunter`.
+3. Under **Repository permissions**, set **Contents** to **Read and write**. Leave everything else at No access.
+4. Click **Generate token** and copy it.
+5. Click the extension icon → **Settings**. Enter your GitHub username, the repository name and the token, then **Save** and **Sync now**.
+
+The token is stored only in this browser's extension storage, and it can only change files in this one repository. To revoke it, delete it on GitHub. Prices sync about 1 minute after they're recorded, and the website shows them once GitHub Pages republishes (1–2 minutes).
+
+**Tips:**
+- During Black Friday week, open your watchlist laptops once a day (the website's links and the popup both open the store pages). Each visit records a fresh price.
+- Amazon prices can come from third-party sellers. The extension saves the seller name with each price.
+- If a store redesigns its pages and a price stops being read, the badge says "no price found". Log it with **+** on the website until the reader is updated.
+
+### Black Friday Report
+
+The **Black Friday Report** page compares each laptop's price 20 days before Black Friday with its lowest price during sale week (Thanksgiving week through Cyber Monday). Before sale week starts, it compares today with 20 days ago. Each laptop gets a verdict: *Real drop*, *Lower, but not the lowest*, *About the same*, *Raised, then "discounted"* (the price went up before the sale), *Higher than before*, or *Not enough history*.
+
 ### Rules the checker follows
 
 - It **honors robots.txt**. If a site says automated tools may not read a page, that page is skipped and marked "skipped".
 - It goes **slowly**: one product page every 3–5 seconds, a few times a day.
+- Stores that refuse 3 times in a row are only retried **once a day**.
 - It **never bypasses blocks.** If a retailer refuses automated access (HTTP 403, a CAPTCHA or bot check), it doesn't retry or disguise itself. The laptop is marked **"Auto-check blocked: check manually"**, and you can use *Check at retailer* → *Log price* for that one.
 - It never invents a price. If no machine-readable price is found, nothing is recorded.
 

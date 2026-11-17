@@ -121,7 +121,7 @@
   const enc = encodeURIComponent;
   const RETAILERS = [
     { id: 'bestbuy', name: 'Best Buy', home: 'https://www.bestbuy.com/', search: q => `https://www.bestbuy.com/site/searchpage.jsp?st=${enc(q)}`, note: 'Check the exact SKU. Open-box and member prices are listed separately.' },
-    { id: 'amazon', name: 'Amazon', home: 'https://www.amazon.com/', search: q => `https://www.amazon.com/s?k=${enc(q)}`, note: 'Confirm "Ships from" and "Sold by". Third-party sellers can differ from Amazon pricing.' },
+    { id: 'amazon', name: 'Amazon', home: 'https://www.amazon.com/', search: q => `https://www.amazon.com/s?k=${enc(q)}`, note: 'Automatic checks aren\'t possible (Amazon blocks them, and its API needs an affiliate account with regular sales). Add products by link: each one gets camelcamelcamel and Keepa price-history links, and you log prices with +.' },
     { id: 'newegg', name: 'Newegg', home: 'https://www.newegg.com/', search: q => `https://www.newegg.com/p/pl?d=${enc(q)}`, note: 'Marketplace sellers are common. Look for "Sold by Newegg".' },
     { id: 'dell', name: 'Dell / Alienware', home: 'https://www.dell.com/en-us', search: q => `https://www.dell.com/en-us/search/${enc(q)}`, note: 'Configurable systems: price depends on the options you pick.' },
     { id: 'lenovo', name: 'Lenovo', home: 'https://www.lenovo.com/us/en/', search: q => `https://www.lenovo.com/us/en/search?text=${enc(q)}`, note: 'eCoupons often apply at checkout. Log the final price you see.' },
@@ -278,7 +278,7 @@
     if (price == null || price <= 0 || price > 100000) return null;
     const t = new Date(o.t || o.observedAt || o.observed_at || Date.now());
     if (isNaN(t)) return null;
-    let status = ['verified', 'unverified', 'demo', 'auto'].includes(o.status) ? o.status : (toBool(o.verified) ? 'verified' : 'unverified');
+    let status = ['verified', 'unverified', 'demo', 'auto', 'archive', 'seen'].includes(o.status) ? o.status : (toBool(o.verified) ? 'verified' : 'unverified');
     return { t: t.toISOString(), price: Math.round(price * 100) / 100, status, source: String(o.source || '').slice(0, 120), note: String(o.note || '').slice(0, 200) };
   }
   function normalizeLaptop(r) {
@@ -426,6 +426,8 @@
   function statusBadge(l) {
     const s = statusOf(l);
     if (s === 'demo') return '<span class="badge badge-demo" title="Demonstration data. Not a real price.">Demo data</span>';
+    if (s === 'seen') return `<span class="badge badge-seen" title="Recorded by the RTX Deal Hunter browser extension from the store page you opened">${I('check')}Seen in browser</span>${l.available === false ? '<span class="badge badge-warn">Out of stock</span>' : ''}`;
+    if (s === 'archive') return `<span class="badge badge-archive" title="Price read from a Wayback Machine snapshot of the retailer's page">Archived price</span>`;
     if (s === 'auto') return `<span class="badge badge-auto" title="Read automatically by the scheduled price checker">${I('refresh')}Auto-checked</span>${l.available === false ? '<span class="badge badge-warn">Out of stock</span>' : ''}`;
     if (s === 'verified') return `<span class="badge badge-ok" title="You confirmed this price on the retailer page">${I('check')}Verified</span>`;
     if (s === 'unverified') return '<span class="badge badge-warn" title="Price not confirmed on the retailer page">Unverified</span>';
@@ -442,6 +444,23 @@
     }
     if (st.isLow) h += ' <span class="pill pill-low">Lowest recorded</span>';
     return h;
+  }
+  function amazonAsin(url) {
+    const m = String(url || '').match(/amazon\.com\/(?:[^/]+\/)?(?:dp|gp\/product|gp\/aw\/d)\/([A-Z0-9]{10})/i);
+    return m ? m[1].toUpperCase() : null;
+  }
+  function historyLinks(l) {
+    const asin = amazonAsin(l.url);
+    if (!asin) return '';
+    return `<div class="history-links small"><span class="muted">Amazon price history:</span>
+      <a href="https://camelcamelcamel.com/product/${asin}" target="_blank" rel="noopener noreferrer">camelcamelcamel${I('external')}</a>
+      <a href="https://keepa.com/#!product/1-${asin}" target="_blank" rel="noopener noreferrer">Keepa${I('external')}</a></div>`;
+  }
+  // Price in effect at time t: the last observation on or before t
+  function priceAt(l, t) {
+    let p = null;
+    for (const o of l.history) { if (new Date(o.t) <= t) p = o; else break; }
+    return p;
   }
   function retailerLink(l) {
     const r = RETAILER_MAP[l.retailer];
@@ -490,6 +509,7 @@
       </div>
       <button class="score-line" data-action="detail" data-id="${esc(l.id)}" title="See how this score is calculated">${scoreRing(s.total)}<div><div class="score-label">${profileLabel(pk)} score</div><div class="muted small">${esc(strengths(l, pk))}</div></div></button>
       <footer class="card-foot">
+        ${statusOf(l) === 'archive' ? `<div class="muted small">Last known price from an archived copy of the page, ${esc(fmtDay(latest(l).t))}</div>` : ''}
         ${l.checkStatus && l.checkStatus !== 'ok' ? `<div class="auto-warn small" title="${esc(l.checkDetail)}">${I('info')}Auto-check ${l.checkStatus === 'no-price' ? "couldn't find a price" : l.checkStatus}: check manually</div>` : ''}
         <div class="checked">${I('clock')}<span>${st ? `${esc(r.name)} · <time datetime="${st.lastT}" title="${esc(fmtDate(st.lastT))}">checked ${ago(st.lastT)}</time>` : esc(r.name) + (lastCheck(l) ? ' · tried ' + ago(lastCheck(l)) : ' · not checked')}</span></div>
         <div class="card-actions">
@@ -552,7 +572,7 @@
       <label class="field"><span class="sr-only">Brand</span><select id="f-brand">${opt('all', 'All brands', f.brand)}${brands.map(b => opt(b, b, f.brand)).join('')}</select></label>
       <label class="field"><span class="sr-only">Retailer</span><select id="f-retailer">${opt('all', 'All retailers', f.retailer)}${RETAILERS.map(r => opt(r.id, r.name, f.retailer)).join('')}</select></label>
       <div class="field field-range"><label><span class="sr-only">Minimum price</span><input type="number" id="f-min" inputmode="numeric" min="0" step="50" placeholder="Min $" value="${esc(f.min)}"></label><span class="muted">–</span><label><span class="sr-only">Maximum price</span><input type="number" id="f-max" inputmode="numeric" min="0" step="50" placeholder="Max $" value="${esc(f.max)}"></label></div>
-      <label class="field"><span class="sr-only">Price status</span><select id="f-status">${opt('all', 'All prices', f.status)}${opt('verified', 'Verified only', f.status)}${opt('auto', 'Auto-checked', f.status)}${opt('unverified', 'Unverified', f.status)}${opt('demo', 'Demo data', f.status)}</select></label>
+      <label class="field"><span class="sr-only">Price status</span><select id="f-status">${opt('all', 'All prices', f.status)}${opt('verified', 'Verified only', f.status)}${opt('auto', 'Auto-checked', f.status)}${opt('archive', 'Archived price', f.status)}${opt('seen', 'Seen in browser', f.status)}${opt('unverified', 'Unverified', f.status)}${opt('demo', 'Demo data', f.status)}</select></label>
       <label class="field"><span class="sr-only">Sort</span><select id="f-sort">${SORTS.map(([v, l]) => opt(v, l, f.sort || defSort)).join('')}</select></label>
       <button class="btn btn-ghost btn-sm" data-action="reset-filters">Reset</button>
     </div>`;
@@ -578,6 +598,7 @@
     { group: 'Overview' },
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
     { id: 'deals', label: 'Best Deals', icon: 'flame' },
+    { id: 'bfreport', label: 'Black Friday Report', icon: 'bolt' },
     { id: 'gpus', label: 'RTX 5050–5090', icon: 'chip' },
     { id: 'compare', label: 'Compare Laptops', icon: 'columns' },
     { id: 'history', label: 'Price History', icon: 'chart' },
@@ -775,6 +796,76 @@
   }
   const kpi = (label, value, sub, tone = '') => `<div class="kpi ${tone}"><div class="kpi-label">${esc(label)}</div><div class="kpi-value">${esc(value)}</div><div class="kpi-sub muted small">${esc(sub)}</div></div>`;
 
+  /* ---------- Black Friday report ---------- */
+  function bfAnalysis(l, dates) {
+    const { bf, cm } = dates;
+    const now = new Date();
+    const saleStart = new Date(bf.getTime() - 7 * DAY), saleEnd = new Date(cm.getTime() + DAY);
+    const baseT = new Date(bf.getTime() - 20 * DAY);
+    const during = now >= saleStart;
+    const inSale = l.history.filter(o => new Date(o.t) >= saleStart && new Date(o.t) < saleEnd);
+    let sale = null, saleLabel;
+    if (during && inSale.length) { sale = inSale.reduce((a, b) => b.price < a.price ? b : a); saleLabel = 'Lowest in sale week'; }
+    else if (!during && latest(l)) { sale = latest(l); saleLabel = 'Today'; }
+    const ref = during ? baseT : new Date(now.getTime() - 20 * DAY);
+    const base = priceAt(l, ref);
+    const pre = l.history.filter(o => new Date(o.t) > ref && new Date(o.t) < (during ? saleStart : now));
+    const preHigh = pre.length ? Math.max(...pre.map(o => o.price)) : null;
+    const low30 = l.history.filter(o => new Date(o.t) >= new Date(ref.getTime() - 10 * DAY) && new Date(o.t) < (during ? saleStart : now));
+    const lowBefore = low30.length ? Math.min(...low30.map(o => o.price)) : null;
+    if (!base || !sale) return { l, base, sale, saleLabel, verdict: 'nodata', firstT: l.history[0] ? l.history[0].t : null };
+    const d = sale.price - base.price, pct = d / base.price * 100;
+    let verdict = Math.abs(pct) < 3 ? 'same' : pct < 0 ? 'drop' : 'up';
+    if (verdict !== 'up' && preHigh && preHigh > base.price * 1.03 && sale.price >= base.price * 0.97) verdict = 'inflated';
+    if (verdict === 'drop' && lowBefore && sale.price > lowBefore * 1.01) verdict = 'drop-not-lowest';
+    return { l, base, sale, saleLabel, d, pct, preHigh, lowBefore, verdict };
+  }
+  const VERDICT = {
+    drop: ['good', 'Real drop', 'Lower than 20 days earlier and the lowest in this period.'],
+    'drop-not-lowest': ['ok', 'Lower, but not the lowest', 'Cheaper than 20 days earlier, but it was cheaper still at some point before.'],
+    same: ['muted', 'About the same', 'Within 3% of the price 20 days earlier.'],
+    inflated: ['warn', 'Raised, then "discounted"', 'The price went up after the 20-day mark, so the sale mostly undoes that increase.'],
+    up: ['bad', 'Higher than before', 'More expensive than 20 days earlier.'],
+    nodata: ['muted', 'Not enough history', 'No price was recorded around 20 days before.']
+  };
+  function renderBfReport() {
+    const now = new Date();
+    let dates = shoppingDates(now.getFullYear());
+    if (now > new Date(dates.cm.getTime() + 14 * DAY)) dates = shoppingDates(now.getFullYear());
+    const during = now >= new Date(dates.bf.getTime() - 7 * DAY);
+    const rows = visible().map(l => bfAnalysis(l, dates));
+    const order = { drop: 0, 'drop-not-lowest': 1, same: 2, inflated: 3, up: 4, nodata: 5 };
+    rows.sort((a, b) => order[a.verdict] - order[b.verdict] || (a.pct ?? 0) - (b.pct ?? 0));
+    const withData = rows.filter(r => r.verdict !== 'nodata');
+    const avg = withData.length ? withData.reduce((n, r) => n + r.pct, 0) / withData.length : null;
+    const counts = Object.fromEntries(Object.keys(VERDICT).map(k => [k, rows.filter(r => r.verdict === k).length]));
+    const dfmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const baseDate = during ? new Date(dates.bf.getTime() - 20 * DAY) : new Date(now.getTime() - 20 * DAY);
+    view().innerHTML = pageHead('Black Friday Report', during
+      ? `Lowest price during sale week (${dfmt(new Date(dates.bf.getTime() - 7 * DAY))} – ${dfmt(dates.cm)}) compared with the price 20 days before Black Friday (${dfmt(baseDate)}).`
+      : `Black Friday is ${dfmt(dates.bf)}. Until sale week starts, this compares today's price with the price 20 days ago (${dfmt(baseDate)}). It switches to sale-week prices automatically.`) + `
+      <div class="notice">${I('info')}<div>This shows whether a "deal" is really cheaper than before. Past prices come from automatic checks, prices you logged, and archived copies of retailer pages (Wayback Machine). Laptops tracked only recently show "Not enough history". For Amazon, use the camelcamelcamel or Keepa links in each laptop's details for longer history.</div></div>
+      <section class="kpis">
+        ${kpi('Laptops with history', `${withData.length} / ${rows.length}`, 'Have a price from 20 days earlier')}
+        ${kpi('Average change', avg == null ? '—' : (avg <= 0 ? '−' : '+') + Math.abs(avg).toFixed(1) + '%', during ? 'Sale-week low vs 20 days before' : 'Today vs 20 days ago', avg != null && avg < -3 ? 'good' : '')}
+        ${kpi('Real drops', counts.drop + counts['drop-not-lowest'], `${counts.drop} at their lowest`)}
+        ${kpi('Raised, then "discounted"', counts.inflated, 'Watch out for these')}
+      </section>
+      ${rows.length ? `<div class="table-wrap"><table class="bf-table">
+        <thead><tr><th>Laptop</th><th class="num">20 days before</th><th class="num">${during ? 'Sale-week low' : 'Today'}</th><th class="num">Change</th><th>Verdict</th></tr></thead>
+        <tbody>${rows.map(r => {
+          const v = VERDICT[r.verdict];
+          return `<tr>
+            <td><button class="linklike" data-action="detail" data-id="${esc(r.l.id)}">${esc(r.l.name)}</button>${r.l.demo ? ' <span class="badge badge-demo">Demo</span>' : ''}<div class="muted small">${GPUS[r.l.gpu].label} · ${esc(RETAILER_MAP[r.l.retailer].name)}</div></td>
+            <td class="num">${r.base ? money(r.base.price) + `<div class="muted small">${esc(fmtDay(r.base.t))}${r.base.status === 'archive' ? ' · archive' : ''}</div>` : '<span class="muted">—</span>'}</td>
+            <td class="num">${r.sale ? money(r.sale.price) + `<div class="muted small">${esc(fmtDay(r.sale.t))}</div>` : '<span class="muted">—</span>'}</td>
+            <td class="num">${r.d != null ? `<span class="delta ${r.d < 0 ? 'down' : r.d > 0 ? 'up' : 'flat'}">${r.d < 0 ? '−' : r.d > 0 ? '+' : ''}${money(Math.abs(r.d))} (${Math.abs(r.pct).toFixed(1)}%)</span>` : '<span class="muted">—</span>'}</td>
+            <td><span class="verdict v-${v[0]}" title="${esc(v[2])}">${esc(v[1])}</span>${r.verdict === 'nodata' && r.firstT ? `<div class="muted small">History starts ${esc(fmtDay(r.firstT))}</div>` : ''}</td>
+          </tr>`;
+        }).join('')}</tbody></table></div>
+        <ul class="plain-list small mt">${Object.entries(VERDICT).map(([k, v]) => `<li><span class="verdict v-${v[0]}">${esc(v[1])}</span> ${esc(v[2])}</li>`).join('')}</ul>` : emptyState('Nothing tracked yet', 'Add laptops or a Best Buy key to fill this report.')}`;
+  }
+
   /* ---------- Compare ---------- */
   function renderCompare() {
     const ls = state.compare.map(getL).filter(Boolean);
@@ -829,8 +920,9 @@
       <div class="notice">${I('info')}<div>History is stored in <strong>this browser on this device</strong>. It survives closing and reopening the browser, but not clearing site data, private windows or switching devices. Use <a href="#/settings">Settings → Export</a> to back it up or move it.</div></div>
       <section class="panel">
         <div class="panel-head"><div><h2>${esc(l.name)}</h2><div class="muted small">${GPUS[l.gpu].label} · ${esc(RETAILER_MAP[l.retailer].name)} ${statusBadge(l)}</div></div>${priceHtml(l, st, true)}</div>
+        ${historyLinks(l)}
         <div class="chart" id="hist-chart"></div>
-        <div class="legend small muted"><span><i class="dot dot-auto"></i>Auto-checked</span><span><i class="dot dot-verified"></i>Verified</span><span><i class="dot dot-unverified"></i>Unverified</span><span><i class="dot dot-demo"></i>Demo</span><span><i class="dash"></i>Lowest / highest recorded</span></div>
+        <div class="legend small muted"><span><i class="dot dot-auto"></i>Auto-checked</span><span><i class="dot dot-archive"></i>Archived (Wayback)</span><span><i class="dot dot-seen"></i>Seen in browser</span><span><i class="dot dot-verified"></i>Verified</span><span><i class="dot dot-unverified"></i>Unverified</span><span><i class="dot dot-demo"></i>Demo</span><span><i class="dash"></i>Lowest / highest recorded</span></div>
       </section>
       ${st ? `<div class="hist-grid">
         <section class="panel">
@@ -848,6 +940,7 @@
           <h2>Today's price vs before</h2>
           ${cmpRow('vs previous check', st.dPrev, st.dPrevPct)}
           ${cmpRow('vs about 7 days ago', st.dWeek, st.dWeekPct)}
+          ${(() => { const o = priceAt(l, new Date(Date.now() - 20 * DAY)); return o ? cmpRow('vs about 20 days ago', st.cur - o.price, (st.cur - o.price) / o.price * 100) : cmpRow('vs about 20 days ago', null); })()}
           ${cmpRow('vs first recorded', st.count > 1 ? st.dFirst : null, st.dFirstPct)}
           ${cmpRow('vs lowest recorded', st.count > 1 ? st.aboveLow : null, st.lo ? st.aboveLow / st.lo * 100 : null)}
           ${cmpRow('vs highest recorded', st.count > 1 ? -st.belowHigh : null, st.belowHighPct)}
@@ -867,7 +960,7 @@
     return `<div class="table-wrap"><table class="obs-table"><thead><tr><th>Date & time</th><th>Price</th><th>Change</th><th>Status</th><th>Source / note</th><th></th></tr></thead><tbody>${rows.map(({ o, i }) => {
       const prev = l.history[i - 1];
       const d = prev ? o.price - prev.price : null;
-      return `<tr><td>${esc(fmtDate(o.t))}</td><td class="num">${money(o.price)}</td><td>${d == null ? '<span class="muted">first</span>' : d === 0 ? '<span class="muted">—</span>' : `<span class="delta ${d < 0 ? 'down' : 'up'}">${d < 0 ? '−' : '+'}${money(Math.abs(d)).slice(1)}</span>`}</td><td><span class="badge ${o.status === 'verified' ? 'badge-ok' : o.status === 'auto' ? 'badge-auto' : o.status === 'demo' ? 'badge-demo' : 'badge-warn'}">${o.status}</span></td><td class="muted small">${esc([o.source, o.note].filter(Boolean).join(' · ')) || '—'}</td><td><button class="icon-btn" data-action="del-obs" data-id="${esc(l.id)}" data-i="${i}" title="Delete this observation">${I('trash')}</button></td></tr>`;
+      return `<tr><td>${esc(fmtDate(o.t))}</td><td class="num">${money(o.price)}</td><td>${d == null ? '<span class="muted">first</span>' : d === 0 ? '<span class="muted">—</span>' : `<span class="delta ${d < 0 ? 'down' : 'up'}">${d < 0 ? '−' : '+'}${money(Math.abs(d)).slice(1)}</span>`}</td><td><span class="badge ${o.status === 'verified' ? 'badge-ok' : o.status === 'auto' ? 'badge-auto' : o.status === 'archive' ? 'badge-archive' : o.status === 'seen' ? 'badge-seen' : o.status === 'demo' ? 'badge-demo' : 'badge-warn'}">${o.status}</span></td><td class="muted small">${esc([o.source, o.note].filter(Boolean).join(' · ')) || '—'}</td><td><button class="icon-btn" data-action="del-obs" data-id="${esc(l.id)}" data-i="${i}" title="Delete this observation">${I('trash')}</button></td></tr>`;
     }).join('')}</tbody></table></div>`;
   }
 
@@ -1053,6 +1146,12 @@
         </section>
 
         <section class="panel">
+          <h2>Browser extension</h2>
+          <p class="muted small">The <strong>RTX Deal Hunter Companion</strong> extension (in the <code>extension</code> folder of this project) records prices from Amazon, Best Buy, B&amp;H, Newegg, Walmart and other store pages you open in Chrome or Edge. It saves them to <code>manual.json</code> in your repository, and this site loads that file along with <code>feed.json</code>. Those prices are labeled <span class="badge badge-seen">Seen in browser</span>.</p>
+          <p class="muted small">${state.extMeta && state.extMeta.generated ? `Last extension sync: ${esc(fmtDate(state.extMeta.generated))} (${state.extMeta.items} laptops).` : 'No extension data yet. Install it with the steps in README → Browser extension.'}</p>
+        </section>
+
+        <section class="panel">
           <h2>About your data</h2>
           <ul class="plain-list small">
             <li>Everything is saved in this browser's local storage on this device. Nothing is sent to a server.</li>
@@ -1114,6 +1213,7 @@
         <button class="btn btn-sm btn-ghost" data-action="edit" data-id="${esc(l.id)}">${I('edit')}Edit</button>
         <button class="btn btn-sm btn-danger-ghost" data-action="delete" data-id="${esc(l.id)}">${I('trash')}Delete</button>
       </div>
+      ${historyLinks(l)}
       <div class="chart chart-sm" id="detail-chart"></div>
       <div class="detail-grid">
         <section>
@@ -1438,6 +1538,12 @@
       if (!res.ok) throw new Error(res.status === 404 ? 'feed.json was not found. Upload it with the project files.' : 'HTTP ' + res.status);
       const data = await res.json();
       const r = mergeAll(feedToRaws(data, 'Feed: ' + url.hostname));
+      // Prices recorded by the browser extension live in manual.json next to feed.json
+      try {
+        const m = new URL('manual.json', url); m.searchParams.set('_', Date.now());
+        const mr = await fetch(m.href, { cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer' });
+        if (mr.ok) { const md = await mr.json(); const r2 = mergeAll(feedToRaws(md, 'Browser extension')); r.lap += r2.lap; r.obs += r2.obs; state.extMeta = { generated: md.generated || null, items: (md.items || []).length }; }
+      } catch { /* no extension data yet */ }
       state.feedMeta = { generated: data.generated || null, schedule: data.schedule || '', sources: Array.isArray(data.sources) ? data.sources.slice(0, 30) : [], items: (data.items || []).length, error: null };
       state.settings.lastFeedAt = new Date().toISOString();
       // First real data in: hide the demo entries so they don't mix with real prices
@@ -1538,7 +1644,7 @@
     ui.rerunResults = null;
     ui.charts = [];
     if (LIST_VIEWS[currentView]) return renderListView(currentView);
-    ({ dashboard: renderDashboard, compare: renderCompare, history: renderHistory, watchlist: renderWatchlist, retailers: renderRetailers, settings: renderSettings }[currentView] || renderDashboard)();
+    ({ dashboard: renderDashboard, bfreport: renderBfReport, compare: renderCompare, history: renderHistory, watchlist: renderWatchlist, retailers: renderRetailers, settings: renderSettings }[currentView] || renderDashboard)();
   }
   function route() {
     const key = (location.hash.replace(/^#\/?/, '').split('?')[0]) || 'dashboard';
