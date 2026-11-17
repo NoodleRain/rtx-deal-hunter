@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-17T22:45:21.541Z",
+ "generated": "2026-11-17T22:49:22.901Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -9,7 +9,7 @@
    "addedAt": "2026-11-17T22:41:19.443Z",
    "available": true,
    "checkStatus": "ok",
-   "checkedAt": "2026-11-17T22:41:19.444Z",
+   "checkedAt": "2026-11-17T22:47:20.073Z",
    "cpu": "Intel Core 5 Processor",
    "displayRes": "FHD",
    "displaySize": 16,
@@ -26,7 +26,7 @@
    ],
    "hz": 165,
    "id": "amz-B0CJCNL315",
-   "lastSeenAt": "2026-11-17T22:41:19.444Z",
+   "lastSeenAt": "2026-11-17T22:47:20.073Z",
    "listPrice": 1349.99,
    "name": "Acer Nitro V (RTX 5050, 512GB)",
    "retailer": "amazon",
@@ -55,6 +55,36 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 1024,
    "url": "https://www.amazon.com/dp/B0DZZWMB2L",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-17T22:48:22.237Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-17T22:48:22.237Z",
+   "cpu": "Intel Core 7-240H",
+   "displayRes": "FHD",
+   "displaySize": 17.3,
+   "fullName": "msi Cyborg 17 17.3\" FHD 144Hz Gaming Laptop: Intel Core 7-240H, NVIDIA Geforce RTX 5060, 16GB DDR5, 1TB NVMe SSD, Type C, Wi-Fi 6E, Win 11 Home: Translucent Black B2RWFKG-074US",
+   "gpu": "RTX 5060",
+   "history": [
+    {
+     "note": "Seller: Amazon.com \n                                                ",
+     "price": 1399.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-17T22:48:22.237Z"
+    }
+   ],
+   "hz": 144,
+   "id": "amz-B0FSGJZDNT",
+   "lastSeenAt": "2026-11-17T22:48:22.237Z",
+   "name": "msi Cyborg 17 (RTX 5060, 16GB, 1TB)",
+   "ram": 16,
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.amazon.com/dp/B0FSGJZDNT",
    "vram": 8
   }
  ]
