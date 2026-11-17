@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-17T22:49:22.901Z",
+ "generated": "2026-11-17T22:50:39.552Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -55,6 +55,36 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 1024,
    "url": "https://www.amazon.com/dp/B0DZZWMB2L",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-17T22:49:38.983Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-17T22:49:38.983Z",
+   "cpu": "AMD Ryzen 7 260",
+   "displayRes": "FHD",
+   "displaySize": 16,
+   "fullName": "Acer Nitro V 16S AI Gaming Laptop | AMD Ryzen 7 260 Processor | NVIDIA GeForce RTX 5060 Laptop GPU (572 AI Tops) | 16\" WUXGA IPS 180Hz Display | 32GB DDR5 | 1TB Gen 4 SSD | Wi-Fi 6 | ANV16S-41-R2AJ",
+   "gpu": "RTX 5060",
+   "history": [
+    {
+     "note": "Seller: Best Tech Deal Corp",
+     "price": 1649.97,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-17T22:49:38.983Z"
+    }
+   ],
+   "hz": 180,
+   "id": "amz-B0F195W823",
+   "lastSeenAt": "2026-11-17T22:49:38.983Z",
+   "name": "Acer Nitro V 16S AI (RTX 5060, 32GB, 1TB)",
+   "ram": 32,
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.amazon.com/dp/B0F195W823",
    "vram": 8
   },
   {
