@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-17T22:50:39.552Z",
+ "generated": "2026-11-17T22:53:25.530Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -116,6 +116,31 @@
    "storage": 1024,
    "url": "https://www.amazon.com/dp/B0FSGJZDNT",
    "vram": 8
+  },
+  {
+   "addedAt": "2026-11-17T22:52:24.891Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-17T22:52:24.892Z",
+   "displaySize": 16,
+   "fullName": "Lenovo 16\" Legion Pro 7i Gaming Laptop",
+   "gpu": "RTX 5090",
+   "history": [
+    {
+     "note": "",
+     "price": 4699,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-17T22:52:24.892Z"
+    }
+   ],
+   "id": "bh-1ezkutb",
+   "lastSeenAt": "2026-11-17T22:52:24.892Z",
+   "name": "Lenovo Legion Pro 7i (RTX 5090)",
+   "retailer": "bh",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.bhphotovideo.com/c/product/1974688-REG/lenovo_83f500m8us_16_legion_pro_7i.html",
+   "vram": 24
   }
  ]
 }
