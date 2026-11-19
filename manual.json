@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-19T01:56:43.715Z",
+ "generated": "2026-11-19T01:58:05.176Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -155,6 +155,37 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 1024,
    "url": "https://www.amazon.com/dp/B0FSGJZDNT",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-19T01:57:04.590Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-19T01:57:05.861Z",
+   "cpu": "AMD Ryzen 9 8940HX",
+   "displayRes": "QHD",
+   "displaySize": 16,
+   "fullName": "msi Crosshair A16 HX 16” 2.5K QHD+ 240Hz Gaming Laptop – AMD Ryzen 9 8940HX, NVIDIA GeForce RTX 5070, 32GB DDR5, 1TB NVMe SSD, Wi-Fi 6E, USB-C, Windows 11 Home: Gunmetal Grey E8WGK-009US",
+   "gpu": "RTX 5070",
+   "history": [
+    {
+     "note": "Seller: Amazon.com \n                                                ",
+     "price": 2294,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-19T01:57:04.590Z"
+    }
+   ],
+   "hz": 240,
+   "id": "amz-B0GJ3VPJBG",
+   "lastSeenAt": "2026-11-19T01:57:05.861Z",
+   "listPrice": 2699,
+   "name": "msi Crosshair A16 HX (RTX 5070, 32GB, 1TB)",
+   "ram": 32,
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.amazon.com/dp/B0GJ3VPJBG",
    "vram": 8
   },
   {
