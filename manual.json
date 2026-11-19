@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-19T01:58:05.176Z",
+ "generated": "2026-11-19T02:04:29.827Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -189,6 +189,35 @@
    "vram": 8
   },
   {
+   "addedAt": "2026-11-19T02:02:44.172Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-19T02:02:44.173Z",
+   "cpu": "Intel Core 7 240H",
+   "displayRes": "FHD",
+   "displaySize": 16,
+   "fullName": "Acer - Nitro V – 16\" WUXGA 165Hz Gaming Laptop - Intel Core 7 240H 2024 - NVIDIA GeForce RTX 5050 – 16GB Memory – 512GB Storage - Obsidian Black",
+   "gpu": "RTX 5050",
+   "history": [
+    {
+     "note": "",
+     "price": 1124.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-19T02:02:44.173Z"
+    }
+   ],
+   "hz": 165,
+   "id": "bb-6675841",
+   "lastSeenAt": "2026-11-19T02:02:44.173Z",
+   "name": "Acer Nitro V (RTX 5050, 16GB)",
+   "ram": 16,
+   "retailer": "bestbuy",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.bestbuy.com/product/acer-nitro-v-16-wuxga-165hz-gaming-laptop-intel-core-7-240h-2024-nvidia-geforce-rtx-5050-16gb-memory-512gb-storage-obsidian-black/JJ8V8HYVHP/sku/6675841",
+   "vram": 8
+  },
+  {
    "addedAt": "2026-11-17T22:52:24.891Z",
    "available": true,
    "checkStatus": "ok",
@@ -211,6 +240,31 @@
    "retailer": "bh",
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "url": "https://www.bhphotovideo.com/c/product/1974688-REG/lenovo_83f500m8us_16_legion_pro_7i.html",
+   "vram": 24
+  },
+  {
+   "addedAt": "2026-11-19T02:03:29.131Z",
+   "available": false,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-19T02:03:29.132Z",
+   "displaySize": 16,
+   "fullName": "Lenovo 16\" Legion Pro 7i Gaming Laptop",
+   "gpu": "RTX 5090",
+   "history": [
+    {
+     "note": "",
+     "price": 4099,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-19T02:03:29.132Z"
+    }
+   ],
+   "id": "bh-8x4qp3",
+   "lastSeenAt": "2026-11-19T02:03:29.132Z",
+   "name": "Lenovo Legion Pro 7i (RTX 5090)",
+   "retailer": "bh",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.bhphotovideo.com/c/product/1875947-REG/lenovo_83f50018us_16_legion_pro_7i.html",
    "vram": 24
   },
   {
