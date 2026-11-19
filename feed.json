@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-18T20:30:48.561Z",
+ "generated": "2026-11-19T02:34:34.146Z",
  "schedule": "Every 3 hours via GitHub Actions",
  "sources": [
   {
@@ -355,11 +355,11 @@
    "panel": "IPS",
    "hz": 240,
    "history": [],
-   "checkedAt": "2026-11-18T20:30:48.561Z",
+   "checkedAt": "2026-11-19T02:34:34.146Z",
    "checkStatus": "no-price",
    "checkDetail": "No machine-readable price on the page",
-   "lastAttemptAt": "2026-11-18T20:30:48.561Z",
-   "failCount": 4,
+   "lastAttemptAt": "2026-11-19T02:34:34.146Z",
+   "failCount": 5,
    "backfilledAt": "2026-11-17T22:28:19.898Z",
    "backfillFound": 0
   },
@@ -381,11 +381,11 @@
    "hz": 240,
    "coolingNote": "Vapor chamber, liquid metal, self-cleaning fans",
    "history": [],
-   "checkedAt": "2026-11-18T20:30:48.561Z",
+   "checkedAt": "2026-11-19T02:34:34.146Z",
    "checkStatus": "error",
    "checkDetail": "Timed out",
-   "lastAttemptAt": "2026-11-18T20:30:48.561Z",
-   "failCount": 4,
+   "lastAttemptAt": "2026-11-19T02:34:34.146Z",
+   "failCount": 5,
    "backfilledAt": "2026-11-17T22:28:19.898Z",
    "backfillFound": 0
   },
