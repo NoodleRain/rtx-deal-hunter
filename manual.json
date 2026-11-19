@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-17T22:53:25.530Z",
+ "generated": "2026-11-19T01:56:43.715Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -39,15 +39,23 @@
    "addedAt": "2026-11-17T22:40:24.564Z",
    "available": true,
    "checkStatus": "ok",
-   "checkedAt": "2026-11-17T22:40:45.656Z",
+   "checkedAt": "2026-11-19T01:53:51.074Z",
    "displayRes": "FHD",
    "displaySize": 16,
    "fullName": "ASUS ROG Strix G16 (2025) Gaming Laptop, 16” FHD+ 16:10 165Hz/3ms, NVIDIA® GeForce RTX™ 5060, Intel® Core™ i7 Processor 14650HX, 16GB DDR5, 1TB Gen 4 SSD, Wi-Fi 7, Windows 11 Home, G615JMR-AS74",
    "gpu": "RTX 5060",
-   "history": [],
+   "history": [
+    {
+     "note": "Seller: Amazon.com \n                                                ",
+     "price": 1656.9,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-19T01:53:51.074Z"
+    }
+   ],
    "hz": 165,
    "id": "amz-B0DZZWMB2L",
-   "lastSeenAt": "2026-11-17T22:40:45.656Z",
+   "lastSeenAt": "2026-11-19T01:53:51.074Z",
    "listPrice": 1666.43,
    "name": "ASUS ROG Strix G16 (2025) (RTX 5060, 16GB, 1TB)",
    "ram": 16,
@@ -61,7 +69,7 @@
    "addedAt": "2026-11-17T22:49:38.983Z",
    "available": true,
    "checkStatus": "ok",
-   "checkedAt": "2026-11-17T22:49:38.983Z",
+   "checkedAt": "2026-11-19T01:54:13.042Z",
    "cpu": "AMD Ryzen 7 260",
    "displayRes": "FHD",
    "displaySize": 16,
@@ -74,17 +82,49 @@
      "source": "Browser extension",
      "status": "seen",
      "t": "2026-11-17T22:49:38.983Z"
+    },
+    {
+     "note": "Seller: Holiday Electronics Deal",
+     "price": 1699.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-19T01:54:13.042Z"
     }
    ],
    "hz": 180,
    "id": "amz-B0F195W823",
-   "lastSeenAt": "2026-11-17T22:49:38.983Z",
+   "lastSeenAt": "2026-11-19T01:54:13.042Z",
    "name": "Acer Nitro V 16S AI (RTX 5060, 32GB, 1TB)",
    "ram": 32,
    "retailer": "amazon",
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 1024,
    "url": "https://www.amazon.com/dp/B0F195W823",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-19T01:54:58.564Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-19T01:54:58.565Z",
+   "displaySize": 16,
+   "fullName": "GIGABYTE Gaming A16 - Intel i7-13620H GeForce RTX 5070 16\" Laptop",
+   "gpu": "RTX 5070",
+   "history": [
+    {
+     "note": "Seller: Snow Bell",
+     "price": 1628,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-19T01:54:58.565Z"
+    }
+   ],
+   "id": "amz-B0FDM3M1WF",
+   "lastSeenAt": "2026-11-19T01:54:58.565Z",
+   "name": "GIGABYTE Gaming A16 Intel i7-13620H GeForce RTX 5070",
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.amazon.com/dp/B0FDM3M1WF",
    "vram": 8
   },
   {
@@ -141,6 +181,35 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "url": "https://www.bhphotovideo.com/c/product/1974688-REG/lenovo_83f500m8us_16_legion_pro_7i.html",
    "vram": 24
+  },
+  {
+   "addedAt": "2026-11-19T01:55:43.027Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-19T01:55:43.028Z",
+   "cpu": "AMD Ryzen 9 9955HX",
+   "displayRes": "FHD",
+   "displaySize": 16,
+   "fullName": "ASUS ROG Strix G16 Gaming Laptop, 16\" WUXGA 165Hz, AMD Ryzen 9 9955HX, NVIDIA GeForce RTX 5060, 16GB, 1TB SSD, Windows 11, Eclipse Gray",
+   "gpu": "RTX 5060",
+   "history": [
+    {
+     "note": "",
+     "price": 1589.97,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-19T01:55:43.028Z"
+    }
+   ],
+   "hz": 165,
+   "id": "walmart-1oft2of",
+   "lastSeenAt": "2026-11-19T01:55:43.028Z",
+   "name": "ASUS ROG Strix G16 (RTX 5060, 1TB)",
+   "retailer": "walmart",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.walmart.com/ip/ASUS-ROG-Strix-G16-Gaming-Laptop-16-WUXGA-165Hz-AMD-Ryzen-9-9955HX-NVIDIA-GeForce-RTX-5060-16GB-1TB-SSD-Windows-11-Eclipse-Gray/13567365941",
+   "vram": 8
   }
  ]
 }
