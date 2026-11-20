@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-19T20:37:19.181Z",
+ "generated": "2026-11-20T02:19:58.700Z",
  "schedule": "Every 3 hours via GitHub Actions",
  "sources": [
   {
@@ -11,21 +11,9 @@
    "detail": "No BESTBUY_API_KEY secret set. See README."
   },
   {
-   "id": "page:www.bhphotovideo.com",
-   "name": "www.bhphotovideo.com",
-   "status": "blocked",
-   "detail": "0/12 pages read"
-  },
-  {
    "id": "page:www.hp.com",
    "name": "www.hp.com",
    "status": "error",
-   "detail": "0/1 pages read"
-  },
-  {
-   "id": "page:www.newegg.com",
-   "name": "www.newegg.com",
-   "status": "blocked",
    "detail": "0/1 pages read"
   }
  ],
@@ -387,11 +375,11 @@
    "hz": 240,
    "coolingNote": "Vapor chamber, liquid metal, self-cleaning fans",
    "history": [],
-   "checkedAt": "2026-11-19T20:37:19.181Z",
+   "checkedAt": "2026-11-20T02:19:58.700Z",
    "checkStatus": "error",
    "checkDetail": "Timed out",
-   "lastAttemptAt": "2026-11-19T20:37:19.181Z",
-   "failCount": 7,
+   "lastAttemptAt": "2026-11-20T02:19:58.700Z",
+   "failCount": 8,
    "backfilledAt": "2026-11-17T22:28:19.898Z",
    "backfillFound": 0
   },
