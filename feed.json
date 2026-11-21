@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-21T11:00:35.823Z",
+ "generated": "2026-11-21T19:15:33.689Z",
  "schedule": "Every 3 hours via GitHub Actions",
  "sources": [
   {
@@ -14,6 +14,12 @@
    "id": "page:www.hp.com",
    "name": "www.hp.com",
    "status": "error",
+   "detail": "0/1 pages read"
+  },
+  {
+   "id": "page:www.dell.com",
+   "name": "www.dell.com",
+   "status": "blocked",
    "detail": "0/1 pages read"
   }
  ],
@@ -349,11 +355,11 @@
    "panel": "IPS",
    "hz": 240,
    "history": [],
-   "checkedAt": "2026-11-20T11:39:56.674Z",
+   "checkedAt": "2026-11-21T19:15:33.689Z",
    "checkStatus": "blocked",
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
-   "lastAttemptAt": "2026-11-20T11:39:56.674Z",
-   "failCount": 7,
+   "lastAttemptAt": "2026-11-21T19:15:33.689Z",
+   "failCount": 8,
    "backfilledAt": "2026-11-21T02:14:21.035Z",
    "backfillFound": 0
   },
@@ -375,11 +381,11 @@
    "hz": 240,
    "coolingNote": "Vapor chamber, liquid metal, self-cleaning fans",
    "history": [],
-   "checkedAt": "2026-11-21T11:00:35.823Z",
+   "checkedAt": "2026-11-21T19:15:33.689Z",
    "checkStatus": "error",
    "checkDetail": "Timed out",
-   "lastAttemptAt": "2026-11-21T11:00:35.823Z",
-   "failCount": 12,
+   "lastAttemptAt": "2026-11-21T19:15:33.689Z",
+   "failCount": 13,
    "backfilledAt": "2026-11-21T02:14:21.035Z",
    "backfillFound": 0
   },
