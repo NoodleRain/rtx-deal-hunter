@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-19T02:04:29.827Z",
+ "generated": "2026-11-22T16:03:02.940Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -186,6 +186,36 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 1024,
    "url": "https://www.amazon.com/dp/B0GJ3VPJBG",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-21T23:04:07.450Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-21T23:04:07.451Z",
+   "displayRes": "FHD",
+   "displaySize": 16,
+   "fullName": "ASUS ROG Strix G16 Gaming Laptop, 16” 16:10 FHD+ 165Hz/3ms, NVIDIA® GeForce RTX™ 5050 Laptop GPU, Intel® Core™ i7 Processor 14650HX, 16GB DDR5-5600, 512GB PCIe Gen 4 SSD, Wi-Fi 7, Windows 11 Home",
+   "gpu": "RTX 5050",
+   "history": [
+    {
+     "note": "Seller: Amazon.com \n                                                ",
+     "price": 1699.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-21T23:04:07.451Z"
+    }
+   ],
+   "hz": 165,
+   "id": "amz-B0HFP5WBBJ",
+   "lastSeenAt": "2026-11-21T23:04:07.451Z",
+   "listPrice": 1799.99,
+   "name": "ASUS ROG Strix G16 (RTX 5050, 16GB, 512GB)",
+   "ram": 16,
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 512,
+   "url": "https://www.amazon.com/dp/B0HFP5WBBJ",
    "vram": 8
   },
   {
