@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-23T03:22:38.165Z",
+ "generated": "2026-11-23T03:24:56.158Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -407,6 +407,65 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 1024,
    "url": "https://www.walmart.com/ip/ASUS-ROG-Strix-G16-Gaming-Laptop-16-WUXGA-165Hz-AMD-Ryzen-9-9955HX-NVIDIA-GeForce-RTX-5060-16GB-1TB-SSD-Windows-11-Eclipse-Gray/13567365941",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-23T03:23:34.351Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T03:23:34.352Z",
+   "cpu": "AMD Ryzen 7 8840HX",
+   "displayRes": "QHD",
+   "displaySize": 16,
+   "fullName": "MSI Crosshair 16\" QHD 240Hz Gaming Laptop, AMD Ryzen 7 8840HX, NVIDIA GeForce RTX 5070, 16GB RAM, 1TB SSD (2026)",
+   "gpu": "RTX 5070",
+   "history": [
+    {
+     "note": "",
+     "price": 1499,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:23:34.352Z"
+    }
+   ],
+   "hz": 240,
+   "id": "walmart-gzhgys",
+   "lastSeenAt": "2026-11-23T03:23:34.352Z",
+   "name": "MSI Crosshair QHD 240Hz (RTX 5070, 16GB, 1TB)",
+   "ram": 16,
+   "retailer": "walmart",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.walmart.com/ip/MSI-Crosshair-16-QHD-240Hz-Gaming-Laptop-AMD-Ryzen-7-8840HX-NVIDIA-GeForce-RTX-5070-16GB-RAM-1TB-SSD-2026/20897570131",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-23T03:23:55.345Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T03:23:55.345Z",
+   "cpu": "Intel Core 7 240H",
+   "displaySize": 15.6,
+   "fullName": "MSI Cyborg Max 15.6\" 144Hz Gaming Laptop, Intel Core 7 240H, NVIDIA GeForce RTX 5070, 16GB RAM, 512GB SSD (2026)",
+   "gpu": "RTX 5070",
+   "history": [
+    {
+     "note": "",
+     "price": 1299,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:23:55.345Z"
+    }
+   ],
+   "hz": 144,
+   "id": "walmart-zedcgg",
+   "lastSeenAt": "2026-11-23T03:23:55.345Z",
+   "name": "MSI Cyborg Max (RTX 5070, 16GB, 512GB)",
+   "ram": 16,
+   "retailer": "walmart",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 512,
+   "url": "https://www.walmart.com/ip/MSI-Cyborg-Max-15-6-144Hz-Gaming-Laptop-Intel-Core-7-240H-NVIDIA-GeForce-RTX-5070-16GB-RAM-512GB-SSD-2026/20906950993",
    "vram": 8
   }
  ]
