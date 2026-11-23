@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-23T03:19:36.425Z",
+ "generated": "2026-11-23T03:22:38.165Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -113,7 +113,7 @@
    "addedAt": "2026-11-19T01:54:58.564Z",
    "available": true,
    "checkStatus": "ok",
-   "checkedAt": "2026-11-19T01:54:58.565Z",
+   "checkedAt": "2026-11-23T03:20:13.113Z",
    "displaySize": 16,
    "fullName": "GIGABYTE Gaming A16 - Intel i7-13620H GeForce RTX 5070 16\" Laptop",
    "gpu": "RTX 5070",
@@ -124,10 +124,17 @@
      "source": "Browser extension",
      "status": "seen",
      "t": "2026-11-19T01:54:58.565Z"
+    },
+    {
+     "note": "Seller: Snow Bell",
+     "price": 1628,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:20:13.113Z"
     }
    ],
    "id": "amz-B0FDM3M1WF",
-   "lastSeenAt": "2026-11-19T01:54:58.565Z",
+   "lastSeenAt": "2026-11-23T03:20:13.113Z",
    "name": "GIGABYTE Gaming A16 Intel i7-13620H GeForce RTX 5070",
    "retailer": "amazon",
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
@@ -165,6 +172,35 @@
    "vram": 8
   },
   {
+   "addedAt": "2026-11-23T03:20:55.927Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T03:20:55.928Z",
+   "displayRes": "FHD",
+   "displaySize": 15.6,
+   "fullName": "Acer Nitro V 15 Gaming Laptop 15.6\" FHD IPS 165Hz Intel 8-core i5-13420H 32GB DDR4 1TB SSD GeForce RTX 5050 GDDR7 DLSS4 (Up to 440 AI Tops) Backlit Thunderbolt WiFi6 Win11Pro ICP Acc",
+   "gpu": "RTX 5050",
+   "history": [
+    {
+     "note": "Seller: Cardinal Pro Electronics",
+     "price": 1439,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:20:55.928Z"
+    }
+   ],
+   "hz": 165,
+   "id": "amz-B0GCZSSH2M",
+   "lastSeenAt": "2026-11-23T03:20:55.928Z",
+   "name": "Acer Nitro V 15 (RTX 5050, 32GB, 1TB)",
+   "ram": 32,
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.amazon.com/dp/B0GCZSSH2M",
+   "vram": 8
+  },
+  {
    "addedAt": "2026-11-19T01:57:04.590Z",
    "available": true,
    "checkStatus": "ok",
@@ -193,6 +229,46 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 1024,
    "url": "https://www.amazon.com/dp/B0GJ3VPJBG",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-23T03:21:21.319Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T03:21:37.465Z",
+   "displayRes": "FHD",
+   "displaySize": 16,
+   "fullName": "ASUS V16 Gaming Laptop 16\" WUXGA, RTX 5070, Core 7 240H, 32GB/1TB",
+   "gpu": "RTX 5070",
+   "history": [
+    {
+     "note": "Seller: MichaelElectronics2 (We Record SN)",
+     "price": 1699.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:21:21.319Z"
+    },
+    {
+     "note": "Seller: MichaelElectronics2 (We Record SN)",
+     "price": 2699.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:21:36.094Z"
+    },
+    {
+     "note": "Seller: MichaelElectronics2 (We Record SN)",
+     "price": 1699.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:21:37.465Z"
+    }
+   ],
+   "id": "amz-B0H4SBSYBS",
+   "lastSeenAt": "2026-11-23T03:21:37.465Z",
+   "name": "ASUS V16 (RTX 5070)",
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.amazon.com/dp/B0H4SBSYBS",
    "vram": 8
   },
   {
