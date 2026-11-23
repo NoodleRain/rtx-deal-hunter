@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-23T17:08:12.577Z",
+ "generated": "2026-11-23T17:14:02.852Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -302,6 +302,34 @@
    "vram": 8
   },
   {
+   "addedAt": "2026-11-23T17:12:13.777Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T17:12:13.779Z",
+   "cpu": "Intel Core Ultra 9 -",
+   "displaySize": 16,
+   "fullName": "Acer - Refurbished Excellent - Predator Helios Neo 16S AI Gaming Laptop - 16\" OLED 240Hz - Intel Core Ultra 9 - NVIDIA GeForce RTX 5070Ti – 32GB – 1TB - Obsidian Black",
+   "gpu": "RTX 5070 Ti",
+   "history": [
+    {
+     "note": "",
+     "price": 1885.33,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T17:12:13.779Z"
+    }
+   ],
+   "hz": 240,
+   "id": "bb-13183149",
+   "lastSeenAt": "2026-11-23T17:12:13.779Z",
+   "name": "Acer Refurbished Excellent (RTX 5070 Ti)",
+   "panel": "OLED",
+   "retailer": "bestbuy",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.bestbuy.com/product/acer-predator-helios-neo-16s-ai-gaming-laptop-16-oled-240hz-intel-core-ultra-9-nvidia-geforce-rtx-5070ti-32gb-1tb-obsidian-black/JJ8V8H38XT",
+   "vram": 12
+  },
+  {
    "addedAt": "2026-11-23T03:29:11.032Z",
    "available": true,
    "checkStatus": "ok",
@@ -406,6 +434,36 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "url": "https://www.bhphotovideo.com/c/product/1875947-REG/lenovo_83f50018us_16_legion_pro_7i.html",
    "vram": 24
+  },
+  {
+   "addedAt": "2026-11-23T17:13:02.102Z",
+   "available": false,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T17:13:02.103Z",
+   "cpu": "Intel Core Ultra 9 386H",
+   "displayRes": "QHD",
+   "displaySize": 16,
+   "fullName": "MSI Stealth 16\" Gaming Copilot+ PC Laptop - Intel Core Ultra 9 386H - NVIDIA RTX 5070 Ti - 2560x1600 OLED - 32GB RAM - 2TB SSD - Windows 11.",
+   "gpu": "RTX 5070 Ti",
+   "history": [
+    {
+     "note": "",
+     "price": 3149.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T17:13:02.103Z"
+    }
+   ],
+   "id": "costco-vbh181",
+   "lastSeenAt": "2026-11-23T17:13:02.103Z",
+   "name": "MSI Stealth Gaming Copilot+ PC (RTX 5070 Ti, 32GB, 2TB)",
+   "panel": "OLED",
+   "ram": 32,
+   "retailer": "costco",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 2048,
+   "url": "https://www.costco.com/p/-/msi-stealth-16-gaming-copilot-pc-laptop-intel-core-ultra-9-386h-nvidia-rtx-5070-ti-2560x1600-oled-32gb-ram-2tb-ssd-windows-11/4201008251",
+   "vram": 12
   },
   {
    "addedAt": "2026-11-23T03:24:57.273Z",
