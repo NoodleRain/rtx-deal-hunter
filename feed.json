@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-22T19:39:37.990Z",
+ "generated": "2026-11-23T01:43:34.911Z",
  "schedule": "Every 3 hours via GitHub Actions",
  "sources": [
   {
@@ -14,12 +14,6 @@
    "id": "page:www.hp.com",
    "name": "www.hp.com",
    "status": "error",
-   "detail": "0/1 pages read"
-  },
-  {
-   "id": "page:www.dell.com",
-   "name": "www.dell.com",
-   "status": "blocked",
    "detail": "0/1 pages read"
   }
  ],
@@ -381,11 +375,11 @@
    "hz": 240,
    "coolingNote": "Vapor chamber, liquid metal, self-cleaning fans",
    "history": [],
-   "checkedAt": "2026-11-22T19:39:37.990Z",
+   "checkedAt": "2026-11-23T01:43:34.911Z",
    "checkStatus": "error",
    "checkDetail": "Timed out",
-   "lastAttemptAt": "2026-11-22T19:39:37.990Z",
-   "failCount": 16,
+   "lastAttemptAt": "2026-11-23T01:43:34.911Z",
+   "failCount": 17,
    "backfilledAt": "2026-11-21T02:14:21.035Z",
    "backfillFound": 0
   },
