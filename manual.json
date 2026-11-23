@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-23T03:25:57.907Z",
+ "generated": "2026-11-23T03:30:11.688Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -299,6 +299,33 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 512,
    "url": "https://www.amazon.com/dp/B0HFP5WBBJ",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-23T03:29:11.032Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T03:29:11.033Z",
+   "cpu": "AMD Ryzen 7 170",
+   "displaySize": 15.6,
+   "fullName": "Lenovo - LOQ 15.6\" 2K Gaming Laptop - AMD Ryzen 7 170 (2025) - 16GB Memory - NVIDIA GeForce RTX 5050 - 512GB Storage - Eclipse Black",
+   "gpu": "RTX 5050",
+   "history": [
+    {
+     "note": "",
+     "price": 999.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:29:11.033Z"
+    }
+   ],
+   "id": "bb-6673556",
+   "lastSeenAt": "2026-11-23T03:29:11.033Z",
+   "name": "Lenovo LOQ 2K (RTX 5050, 16GB)",
+   "ram": 16,
+   "retailer": "bestbuy",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.bestbuy.com/product/lenovo-loq-15-6-2k-gaming-laptop-amd-ryzen-7-170-2025-16gb-memory-nvidia-geforce-rtx-5050-512gb-storage-eclipse-black/JJGH3K2C7T/sku/6673556",
    "vram": 8
   },
   {
