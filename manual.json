@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-23T17:14:02.852Z",
+ "generated": "2026-11-23T17:17:18.626Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -299,6 +299,34 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 512,
    "url": "https://www.amazon.com/dp/B0HFP5WBBJ",
+   "vram": 8
+  },
+  {
+   "addedAt": "2026-11-23T17:16:18.087Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T17:16:19.156Z",
+   "cpu": "AMD Ryzen 7 170",
+   "fullName": "Lenovo LOQ AMD Ryzen 7 170 RTX 4050 Gaming Laptop, 32GB DDR5 | 1TB SSD",
+   "gpu": "RTX 5070",
+   "history": [
+    {
+     "note": "Seller: PCOnline US",
+     "price": 1399,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T17:16:18.088Z"
+    }
+   ],
+   "id": "amz-B0HK8B8ZTV",
+   "lastSeenAt": "2026-11-23T17:16:19.156Z",
+   "listPrice": 2199,
+   "name": "Lenovo LOQ AMD Ryzen 7 170 RTX 4050",
+   "ram": 32,
+   "retailer": "amazon",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.amazon.com/dp/B0HK8B8ZTV",
    "vram": 8
   },
   {
