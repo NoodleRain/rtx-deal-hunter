@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-23T17:17:18.626Z",
+ "generated": "2026-11-23T17:21:12.022Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -39,7 +39,7 @@
    "addedAt": "2026-11-17T22:40:24.564Z",
    "available": true,
    "checkStatus": "ok",
-   "checkedAt": "2026-11-23T03:18:35.705Z",
+   "checkedAt": "2026-11-23T17:20:11.170Z",
    "displayRes": "FHD",
    "displaySize": 16,
    "fullName": "ASUS ROG Strix G16 (2025) Gaming Laptop, 16” FHD+ 16:10 165Hz/3ms, NVIDIA® GeForce RTX™ 5060, Intel® Core™ i7 Processor 14650HX, 16GB DDR5, 1TB Gen 4 SSD, Wi-Fi 7, Windows 11 Home, G615JMR-AS74",
@@ -58,11 +58,18 @@
      "source": "Browser extension",
      "status": "seen",
      "t": "2026-11-23T03:18:35.705Z"
+    },
+    {
+     "note": "Seller: PNR Sales",
+     "price": 1559.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T17:20:11.170Z"
     }
    ],
    "hz": 165,
    "id": "amz-B0DZZWMB2L",
-   "lastSeenAt": "2026-11-23T03:18:35.705Z",
+   "lastSeenAt": "2026-11-23T17:20:11.170Z",
    "listPrice": 1666.43,
    "name": "ASUS ROG Strix G16 (2025) (RTX 5060, 16GB, 1TB)",
    "ram": 16,
