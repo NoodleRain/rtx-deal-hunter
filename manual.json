@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-23T03:24:56.158Z",
+ "generated": "2026-11-23T03:25:57.907Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -379,6 +379,34 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "url": "https://www.bhphotovideo.com/c/product/1875947-REG/lenovo_83f50018us_16_legion_pro_7i.html",
    "vram": 24
+  },
+  {
+   "addedAt": "2026-11-23T03:24:57.273Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-23T03:24:57.273Z",
+   "displayRes": "FHD",
+   "displaySize": 16,
+   "fullName": "ASUS TUF Gaming A16 16” FHD+ 16:10 Laptop, AMD Ryzen™ 7 8745HX Processor, NVIDIA® GeForce RTX™ 5060 Laptop GPU, 16GB RAM, 512GB SSD, Jaeger Gray",
+   "gpu": "RTX 5060",
+   "history": [
+    {
+     "note": "",
+     "price": 1329.19,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-23T03:24:57.273Z"
+    }
+   ],
+   "id": "walmart-10987ca",
+   "lastSeenAt": "2026-11-23T03:24:57.273Z",
+   "name": "ASUS TUF Gaming A16 (RTX 5060, 16GB, 512GB)",
+   "ram": 16,
+   "retailer": "walmart",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 512,
+   "url": "https://www.walmart.com/ip/High-Performance-Laptop-Computer-for-Everyday-Use/20135016910",
+   "vram": 8
   },
   {
    "addedAt": "2026-11-19T01:55:43.027Z",
