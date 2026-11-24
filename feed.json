@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-24T13:42:23.522Z",
+ "generated": "2026-11-24T23:54:19.453Z",
  "schedule": "Every 3 hours via GitHub Actions",
  "sources": [
   {
@@ -11,28 +11,10 @@
    "detail": "No BESTBUY_API_KEY secret set. See README."
   },
   {
-   "id": "page:www.bhphotovideo.com",
-   "name": "www.bhphotovideo.com",
-   "status": "blocked",
-   "detail": "0/12 pages read"
-  },
-  {
    "id": "page:www.hp.com",
    "name": "www.hp.com",
    "status": "error",
    "detail": "0/1 pages read"
-  },
-  {
-   "id": "page:www.newegg.com",
-   "name": "www.newegg.com",
-   "status": "blocked",
-   "detail": "0/1 pages read"
-  },
-  {
-   "id": "wayback",
-   "name": "Wayback Machine (past prices)",
-   "status": "partial",
-   "detail": "0 past prices for 0/15 laptops checked this run"
   }
  ],
  "stats": {
@@ -393,11 +375,11 @@
    "hz": 240,
    "coolingNote": "Vapor chamber, liquid metal, self-cleaning fans",
    "history": [],
-   "checkedAt": "2026-11-24T13:42:23.522Z",
+   "checkedAt": "2026-11-24T23:54:19.453Z",
    "checkStatus": "error",
    "checkDetail": "Timed out",
-   "lastAttemptAt": "2026-11-24T13:42:23.522Z",
-   "failCount": 20,
+   "lastAttemptAt": "2026-11-24T23:54:19.453Z",
+   "failCount": 21,
    "backfilledAt": "2026-11-24T13:42:23.522Z",
    "backfillFound": 0
   },
