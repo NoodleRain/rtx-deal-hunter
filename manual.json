@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-25T04:54:33.821Z",
+ "generated": "2026-11-25T05:00:24.841Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -340,7 +340,7 @@
    "addedAt": "2026-11-23T17:12:13.777Z",
    "available": true,
    "checkStatus": "ok",
-   "checkedAt": "2026-11-23T17:12:13.779Z",
+   "checkedAt": "2026-11-25T04:59:24.032Z",
    "cpu": "Intel Core Ultra 9 -",
    "displaySize": 16,
    "fullName": "Acer - Refurbished Excellent - Predator Helios Neo 16S AI Gaming Laptop - 16\" OLED 240Hz - Intel Core Ultra 9 - NVIDIA GeForce RTX 5070Ti – 32GB – 1TB - Obsidian Black",
@@ -352,11 +352,18 @@
      "source": "Browser extension",
      "status": "seen",
      "t": "2026-11-23T17:12:13.779Z"
+    },
+    {
+     "note": "",
+     "price": 1885.33,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-25T04:59:24.032Z"
     }
    ],
    "hz": 240,
    "id": "bb-13183149",
-   "lastSeenAt": "2026-11-23T17:12:13.779Z",
+   "lastSeenAt": "2026-11-25T04:59:24.032Z",
    "name": "Acer Refurbished Excellent (RTX 5070 Ti)",
    "panel": "OLED",
    "retailer": "bestbuy",
