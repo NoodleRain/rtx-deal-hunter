@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-25T04:48:52.755Z",
+ "generated": "2026-11-25T04:54:33.821Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -527,6 +527,30 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "storage": 2048,
    "url": "https://www.costco.com/p/-/msi-stealth-16-gaming-copilot-pc-laptop-intel-core-ultra-9-386h-nvidia-rtx-5070-ti-2560x1600-oled-32gb-ram-2tb-ssd-windows-11/4201008251",
+   "vram": 12
+  },
+  {
+   "addedAt": "2026-11-25T04:53:33.022Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-25T04:53:33.022Z",
+   "fullName": "Legion Pro 7 Gen 10 (16″ AMD) Gaming Laptop",
+   "gpu": "RTX 5070 Ti",
+   "history": [
+    {
+     "note": "",
+     "price": 2899.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-25T04:53:33.022Z"
+    }
+   ],
+   "id": "lenovo-8ayzv0",
+   "lastSeenAt": "2026-11-25T04:53:33.022Z",
+   "name": "Legion Pro 7 Gen 10 (16″ AMD) (RTX 5070 Ti)",
+   "retailer": "lenovo",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.lenovo.com/us/en/p/laptops/legion-laptops/legion-pro-series/legion-pro-7-gen-10-16-inch-amd/83ru0002us",
    "vram": 12
   },
   {
