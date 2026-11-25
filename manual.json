@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-25T04:43:08.295Z",
+ "generated": "2026-11-25T04:44:23.274Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -555,6 +555,35 @@
    "storage": 1024,
    "url": "https://www.walmart.com/ip/GIGABYTE-Gaming-A16-Pro-16-Laptop-Intel-Core-7-240H-16GB-x-2-32GB-RAM-1TB-SSD-GeForce-RTX-5070-Ti-IPS-165Hz-Titanium-Black-DXHG4USCC4SH/19099455923",
    "vram": 12
+  },
+  {
+   "addedAt": "2026-11-25T04:43:22.692Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-25T04:43:22.692Z",
+   "cpu": "AMD Ryzen 9 8940HX",
+   "displayRes": "QHD",
+   "displaySize": 15.3,
+   "fullName": "HyperX OMEN 15.3\" WQXGA 180Hz 2.5K IPS Gaming Laptop, AMD Ryzen 9 8940HX, NVIDIA GeForce RTX 5070, 16GB, 1TB SSD, Black, Windows 11",
+   "gpu": "RTX 5070",
+   "history": [
+    {
+     "note": "",
+     "price": 1299,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-25T04:43:22.692Z"
+    }
+   ],
+   "hz": 180,
+   "id": "walmart-1dvfu6f",
+   "lastSeenAt": "2026-11-25T04:43:22.692Z",
+   "name": "HyperX OMEN WQXGA 180Hz 2.5K IPS (RTX 5070, 1TB)",
+   "retailer": "walmart",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.walmart.com/ip/HyperX-OMEN-15-3-WQXGA-180Hz-2-5K-IPS-Gaming-Laptop-AMD-Ryzen-9-8940HX-NVIDIA-GeForce-RTX-5070-16GB-1TB-SSD-Black-Windows-11/18183070833",
+   "vram": 8
   },
   {
    "addedAt": "2026-11-19T01:55:43.027Z",
