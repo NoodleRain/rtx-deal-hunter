@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-25T04:44:23.274Z",
+ "generated": "2026-11-25T04:48:52.755Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -469,6 +469,35 @@
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "url": "https://www.bhphotovideo.com/c/product/1875947-REG/lenovo_83f50018us_16_legion_pro_7i.html",
    "vram": 24
+  },
+  {
+   "addedAt": "2026-11-25T04:47:52.162Z",
+   "available": false,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-25T04:47:52.163Z",
+   "cpu": "AMD Ryzen AI 9 465",
+   "displayRes": "QHD",
+   "displaySize": 15.3,
+   "fullName": "Lenovo Legion 5 15.3\" WQXGA Copilot+ PC Gaming Laptop - AMD Ryzen AI 9 465 - GeForce RTX 5070 - 32GB RAM - 1TB SSD - Windows 11 Home",
+   "gpu": "RTX 5070",
+   "history": [
+    {
+     "note": "",
+     "price": 2599.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-25T04:47:52.163Z"
+    }
+   ],
+   "id": "costco-3w0c1b",
+   "lastSeenAt": "2026-11-25T04:47:52.163Z",
+   "name": "Lenovo Legion 5 (RTX 5070, 32GB, 1TB)",
+   "ram": 32,
+   "retailer": "costco",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "storage": 1024,
+   "url": "https://www.costco.com/p/-/lenovo-legion-5-153-wqxga-copilot-pc-gaming-laptop-amd-ryzen-ai-9-465-geforce-rtx-5070-32gb-ram-1tb-ssd-windows-11-home/4000061905",
+   "vram": 8
   },
   {
    "addedAt": "2026-11-23T17:13:02.102Z",
