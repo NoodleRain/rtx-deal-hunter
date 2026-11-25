@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-25T05:00:24.841Z",
+ "generated": "2026-11-25T05:03:56.782Z",
  "source": "RTX Deal Hunter Companion (browser extension)",
  "removed": [],
  "items": [
@@ -340,7 +340,7 @@
    "addedAt": "2026-11-23T17:12:13.777Z",
    "available": true,
    "checkStatus": "ok",
-   "checkedAt": "2026-11-25T04:59:24.032Z",
+   "checkedAt": "2026-11-25T05:02:28.219Z",
    "cpu": "Intel Core Ultra 9 -",
    "displaySize": 16,
    "fullName": "Acer - Refurbished Excellent - Predator Helios Neo 16S AI Gaming Laptop - 16\" OLED 240Hz - Intel Core Ultra 9 - NVIDIA GeForce RTX 5070Ti – 32GB – 1TB - Obsidian Black",
@@ -363,12 +363,40 @@
    ],
    "hz": 240,
    "id": "bb-13183149",
-   "lastSeenAt": "2026-11-25T04:59:24.032Z",
+   "lastSeenAt": "2026-11-25T05:02:28.219Z",
    "name": "Acer Refurbished Excellent (RTX 5070 Ti)",
    "panel": "OLED",
    "retailer": "bestbuy",
    "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
    "url": "https://www.bestbuy.com/product/acer-predator-helios-neo-16s-ai-gaming-laptop-16-oled-240hz-intel-core-ultra-9-nvidia-geforce-rtx-5070ti-32gb-1tb-obsidian-black/JJ8V8H38XT",
+   "vram": 12
+  },
+  {
+   "addedAt": "2026-11-25T05:02:56.094Z",
+   "available": true,
+   "checkStatus": "ok",
+   "checkedAt": "2026-11-25T05:02:56.094Z",
+   "cpu": "Intel Core Ultra 9 -",
+   "displaySize": 16,
+   "fullName": "Acer - Predator Helios Neo 16S AI Gaming Laptop - 16\" OLED 240Hz - Intel Core Ultra 9 - NVIDIA GeForce RTX 5070Ti – 32GB – 1TB - Obsidian Black",
+   "gpu": "RTX 5070 Ti",
+   "history": [
+    {
+     "note": "",
+     "price": 1979.99,
+     "source": "Browser extension",
+     "status": "seen",
+     "t": "2026-11-25T05:02:56.094Z"
+    }
+   ],
+   "hz": 240,
+   "id": "bb-6619312",
+   "lastSeenAt": "2026-11-25T05:02:56.094Z",
+   "name": "Acer Predator Helios Neo 16S AI (RTX 5070 Ti)",
+   "panel": "OLED",
+   "retailer": "bestbuy",
+   "specsFrom": "Read from the product title by the browser extension. Check TGP, cooling and upgradeability yourself.",
+   "url": "https://www.bestbuy.com/product/acer-predator-helios-neo-16s-ai-gaming-laptop-16-oled-240hz-intel-core-ultra-9-nvidia-geforce-rtx-5070ti-32gb-1tb-obsidian-black/JJ8V8H38XT/sku/6619312",
    "vram": 12
   },
   {
