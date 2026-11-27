@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-27T12:19:13.685Z",
+ "generated": "2026-11-27T23:27:19.912Z",
  "schedule": "Every 3 hours via GitHub Actions",
  "sources": [
   {
@@ -15,6 +15,12 @@
    "name": "www.hp.com",
    "status": "error",
    "detail": "0/1 pages read"
+  },
+  {
+   "id": "wayback",
+   "name": "Wayback Machine (past prices)",
+   "status": "partial",
+   "detail": "0 past prices for 0/15 laptops checked this run"
   }
  ],
  "stats": {
@@ -45,7 +51,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -70,7 +76,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -96,7 +102,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -123,7 +129,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -153,7 +159,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -179,7 +185,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -204,7 +210,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -229,7 +235,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -256,7 +262,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -281,7 +287,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -306,7 +312,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -331,7 +337,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -354,7 +360,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 13,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -375,12 +381,12 @@
    "hz": 240,
    "coolingNote": "Vapor chamber, liquid metal, self-cleaning fans",
    "history": [],
-   "checkedAt": "2026-11-27T12:19:13.685Z",
+   "checkedAt": "2026-11-27T23:27:19.912Z",
    "checkStatus": "error",
    "checkDetail": "Timed out",
-   "lastAttemptAt": "2026-11-27T12:19:13.685Z",
-   "failCount": 27,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "lastAttemptAt": "2026-11-27T23:27:19.912Z",
+   "failCount": 28,
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   },
   {
@@ -407,7 +413,7 @@
    "checkDetail": "Retailer blocked automated access (HTTP 403)",
    "lastAttemptAt": "2026-11-27T01:44:12.481Z",
    "failCount": 10,
-   "backfilledAt": "2026-11-24T13:42:23.522Z",
+   "backfilledAt": "2026-11-27T23:27:19.912Z",
    "backfillFound": 0
   }
  ]
