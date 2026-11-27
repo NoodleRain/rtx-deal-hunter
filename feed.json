@@ -1,7 +1,7 @@
 {
  "format": "rtx-deal-hunter-feed",
  "version": 2,
- "generated": "2026-11-27T01:44:12.481Z",
+ "generated": "2026-11-27T12:19:13.685Z",
  "schedule": "Every 3 hours via GitHub Actions",
  "sources": [
   {
@@ -11,27 +11,9 @@
    "detail": "No BESTBUY_API_KEY secret set. See README."
   },
   {
-   "id": "page:www.bhphotovideo.com",
-   "name": "www.bhphotovideo.com",
-   "status": "blocked",
-   "detail": "0/12 pages read"
-  },
-  {
    "id": "page:www.hp.com",
    "name": "www.hp.com",
    "status": "error",
-   "detail": "0/1 pages read"
-  },
-  {
-   "id": "page:www.dell.com",
-   "name": "www.dell.com",
-   "status": "blocked",
-   "detail": "0/1 pages read"
-  },
-  {
-   "id": "page:www.newegg.com",
-   "name": "www.newegg.com",
-   "status": "blocked",
    "detail": "0/1 pages read"
   }
  ],
@@ -393,11 +375,11 @@
    "hz": 240,
    "coolingNote": "Vapor chamber, liquid metal, self-cleaning fans",
    "history": [],
-   "checkedAt": "2026-11-27T01:44:12.481Z",
+   "checkedAt": "2026-11-27T12:19:13.685Z",
    "checkStatus": "error",
    "checkDetail": "Timed out",
-   "lastAttemptAt": "2026-11-27T01:44:12.481Z",
-   "failCount": 26,
+   "lastAttemptAt": "2026-11-27T12:19:13.685Z",
+   "failCount": 27,
    "backfilledAt": "2026-11-24T13:42:23.522Z",
    "backfillFound": 0
   },
